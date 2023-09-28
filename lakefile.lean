@@ -12,9 +12,11 @@ def moreLeanArgs := moreServerArgs
 
 package mil where
   moreServerArgs := moreServerArgs
+  moreLinkArgs := #["-L./lake-packages/LeanInfer/build/lib", "-lonnxruntime", "-lstdc++"]
 
 @[default_target]
 lean_lib MIL where
   moreLeanArgs := moreLeanArgs
 
 require mathlib from git "https://github.com/leanprover-community/mathlib4"@"master"
+require llmaesop from git "https://github.com/Peiyang-Song/aesop"@"peiyang-LeanInfer-dev"

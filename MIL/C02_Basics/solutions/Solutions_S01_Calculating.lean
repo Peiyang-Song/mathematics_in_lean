@@ -29,4 +29,3 @@ example (a b c d : ℝ) (hyp : c = b * a - d) (hyp' : d = a * b) : c = 0 := by
   rw [hyp']
   rw [mul_comm]
   rw [sub_self]
-

@@ -1,20 +1,50 @@
 import MIL.Common
 import Mathlib.Topology.Instances.Real
 
+import Aesop
+
+structure neuralConfig where
+  neuralProver : String
+
+@[aesop unsafe 50% neural]
+def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
+
 open Set Filter Topology
 
-def principal {α : Type*} (s : Set α) : Filter α
-    where
-  sets := { t | s ⊆ t }
-  univ_sets := sorry
-  sets_of_superset := sorry
-  inter_sets := sorry
+-- def principal {α : Type*} (s : Set α) : Filter α
+--     where
+--   sets := { t | s ⊆ t }
+--   univ_sets := sorry
+--   sets_of_superset := sorry
+--   inter_sets := sorry
+
+example {α : Type*} (s : Set α) : Filter α :=
+  { sets := { t | s ⊆ t }
+    univ_sets := subset_univ s
+    sets_of_superset := fun hU hUV ↦ Subset.trans hU hUV
+    inter_sets := fun hU hV ↦ subset_inter hU hV }
+
+-- example : Filter ℕ :=
+--   { sets := { s | ∃ a, ∀ b, a ≤ b → b ∈ s }
+--     univ_sets := sorry
+--     sets_of_superset := sorry
+--     inter_sets := sorry }
 
 example : Filter ℕ :=
   { sets := { s | ∃ a, ∀ b, a ≤ b → b ∈ s }
-    univ_sets := sorry
-    sets_of_superset := sorry
-    inter_sets := sorry }
+    univ_sets := by
+      use 42
+      simp
+    sets_of_superset := by
+      rintro U V ⟨N, hN⟩ hUV
+      use N
+      tauto
+    inter_sets := by
+      rintro U V ⟨N, hN⟩ ⟨N', hN'⟩
+      use max N N'
+      intro b hb
+      rw [max_le_iff] at hb
+      constructor <;> tauto }
 
 def Tendsto₁ {X Y : Type*} (f : X → Y) (F : Filter X) (G : Filter Y) :=
   ∀ V ∈ G, f ⁻¹' V ∈ F
@@ -26,15 +56,17 @@ example {X Y : Type*} (f : X → Y) (F : Filter X) (G : Filter Y) :
     Tendsto₂ f F G ↔ Tendsto₁ f F G :=
   Iff.rfl
 
-#check (@Filter.map_mono : ∀ {α β} {m : α → β}, Monotone (map m))
+-- #check (@Filter.map_mono : ∀ {α β} {m : α → β}, Monotone (map m))
 
-#check
-  (@Filter.map_map :
-    ∀ {α β γ} {f : Filter α} {m : α → β} {m' : β → γ}, map m' (map m f) = map (m' ∘ m) f)
+-- #check
+--   (@Filter.map_map :
+--     ∀ {α β γ} {f : Filter α} {m : α → β} {m' : β → γ}, map m' (map m f) = map (m' ∘ m) f)
 
 example {X Y Z : Type*} {F : Filter X} {G : Filter Y} {H : Filter Z} {f : X → Y} {g : Y → Z}
     (hf : Tendsto₁ f F G) (hg : Tendsto₁ g G H) : Tendsto₁ (g ∘ f) F H :=
-  sorry
+  -- sorry
+  by aesop
+  -- [1] No. [2]: Yes.
 
 variable (f : ℝ → ℝ) (x₀ y₀ : ℝ)
 
@@ -102,4 +134,3 @@ example (P Q R : ℕ → Prop) (hP : ∀ᶠ n in atTop, P n) (hQ : ∀ᶠ n in a
 example (u : ℕ → ℝ) (M : Set ℝ) (x : ℝ) (hux : Tendsto u atTop (𝓝 x))
     (huM : ∀ᶠ n in atTop, u n ∈ M) : x ∈ closure M :=
   sorry
-

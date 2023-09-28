@@ -1,16 +1,34 @@
 import MIL.Common
 import Mathlib.Data.Real.Basic
+
+import Aesop
+
+structure neuralConfig where
+  neuralProver : String
+
+@[aesop unsafe 50% neural]
+def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
+
 -- An example.
 example (a b c : ℝ) : a * b * c = b * (a * c) := by
   rw [mul_comm a b]
   rw [mul_assoc b a c]
 
 -- Try these.
-example (a b c : ℝ) : c * b * a = b * (a * c) := by
-  sorry
+-- example (a b c : ℝ) : c * b * a = b * (a * c) := by
+--   -- sorry
+--   aesop
+--   -- [1] No. [2]: Yes.
+
+theorem my_thm (a b c : ℝ) : c * b * a = b * (a * c) := by
+  aesop
+
+#print axioms my_thm
 
 example (a b c : ℝ) : a * (b * c) = b * (a * c) := by
-  sorry
+  -- sorry
+  aesop
+  -- [1] No. [2]: Yes.
 
 -- An example.
 example (a b c : ℝ) : a * b * c = b * c * a := by
@@ -20,10 +38,14 @@ example (a b c : ℝ) : a * b * c = b * c * a := by
 /- Try doing the first of these without providing any arguments at all,
    and the second with only one argument. -/
 example (a b c : ℝ) : a * (b * c) = b * (c * a) := by
-  sorry
+  -- sorry
+  aesop
+  -- [1] No. [2]: Yes, use `sorry`.
 
 example (a b c : ℝ) : a * (b * c) = b * (a * c) := by
-  sorry
+  -- sorry
+  aesop
+  -- [1] No. [2]: Yes.
 
 -- Using facts from the local context.
 example (a b c d e f : ℝ) (h : a * b = c * d) (h' : e = f) : a * (b * e) = c * (d * f) := by
