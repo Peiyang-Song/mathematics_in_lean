@@ -12,7 +12,7 @@
   {"git":
    {"url": "https://github.com/Peiyang-Song/aesop",
     "subDir?": null,
-    "rev": "abe4b7b79baa4780bbb7e668f616326532e37e04",
+    "rev": "3442b8e88f9aba5b889ad221a249cbe0e8bd2246",
     "opts": {},
     "name": "llmaesop",
     "inputRev?": "peiyang-LeanInfer-dev",
@@ -28,10 +28,10 @@
   {"git":
    {"url": "https://github.com/lean-dojo/LeanInfer.git",
     "subDir?": null,
-    "rev": "6b4211f30e0bdcd070fd6ca3d0c163693aeca909",
+    "rev": "ca2b011b6fc564740b6d1170ea1bb5d307eb81d5",
     "opts": {},
     "name": "LeanInfer",
-    "inputRev?": "v0.0.7",
+    "inputRev?": "peiyang-dev",
     "inherited": true}},
   {"git":
    {"url": "https://github.com/leanprover-community/mathlib4",

@@ -1,5 +1,14 @@
+-- 12 examples in this file, evaluated 3.
 import MIL.Common
 import Mathlib.Topology.MetricSpace.Basic
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 section
 variable {α : Type*} [PartialOrder α]
@@ -84,14 +93,23 @@ variable (a b c : R)
 
 #check (mul_nonneg : 0 ≤ a → 0 ≤ b → 0 ≤ a * b)
 
-example (h : a ≤ b) : 0 ≤ b - a := by
-  sorry
+theorem aux1 (h : a ≤ b) : 0 ≤ b - a := by
+  -- rwa [sub_nonneg] -- suggest_tactics
+  -- sorry
+  aesop
+  -- [1/3] 0/0
 
-example (h: 0 ≤ b - a) : a ≤ b := by
+theorem aux2 (h: 0 ≤ b - a) : a ≤ b := by
   sorry
 
 example (h : a ≤ b) (h' : 0 ≤ c) : a * c ≤ b * c := by
-  sorry
+  -- exact mul_le_mul_of_nonneg_right h h' -- suggest_tactics
+  -- sorry
+  have h1 : 0 ≤ (b - a) * c := mul_nonneg (aux1 _ _ h) h'
+  rw [sub_mul] at h1
+  -- aesop
+  exact aux2 _ _ h1
+  -- [2/3] 2/0
 
 end
 
@@ -104,7 +122,13 @@ variable (x y z : X)
 #check (dist_triangle x y z : dist x z ≤ dist x y + dist y z)
 
 example (x y : X) : 0 ≤ dist x y := by
-  sorry
+  -- simp [dist_nonneg] -- suggest_tactics
+  -- sorry
+  have : 0 ≤ dist x y + dist y x := by
+    rw [← dist_self x]
+    apply dist_triangle
+  linarith [dist_comm x y]
+  -- aesop
+  -- [3/3] 4/0
 
 end
-

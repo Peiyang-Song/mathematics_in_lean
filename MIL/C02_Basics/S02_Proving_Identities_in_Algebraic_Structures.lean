@@ -1,6 +1,16 @@
+-- 12 examples in this file, evaluated 4.
+
 import Mathlib.Algebra.Ring.Defs
 import Mathlib.Data.Real.Basic
 import MIL.Common
+
+import Aesop
+
+structure neuralConfig where
+  neuralProver : String
+
+@[aesop unsafe 50% neural]
+def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 section
 variable (R : Type*) [Ring R]
@@ -59,7 +69,11 @@ theorem add_left_cancel {a b c : R} (h : a + b = a + c) : b = c := by
   sorry
 
 theorem add_right_cancel {a b c : R} (h : a + b = c + b) : a = c := by
-  sorry
+  -- rw [add_comm] at h -- suggest_tactics
+  -- sorry
+  -- aesop
+  rw [← add_neg_cancel_right a b, h, add_neg_cancel_right]
+  -- [1/4] 0/0
 
 theorem mul_zero (a : R) : a * 0 = 0 := by
   have h : a * 0 + a * 0 = a * 0 + 0 := by
@@ -67,13 +81,24 @@ theorem mul_zero (a : R) : a * 0 = 0 := by
   rw [add_left_cancel h]
 
 theorem zero_mul (a : R) : 0 * a = 0 := by
-  sorry
+  -- simp [mul_comm] -- suggest_tactics
+  -- sorry
+  -- aesop
+  have h : 0 * a + 0 * a = 0 * a + 0 := by rw [← add_mul, add_zero, add_zero]
+  rw [add_left_cancel h]
+  -- [2/4] 0/0
 
 theorem neg_eq_of_add_eq_zero {a b : R} (h : a + b = 0) : -a = b := by
   sorry
 
 theorem eq_neg_of_add_eq_zero {a b : R} (h : a + b = 0) : a = -b := by
-  sorry
+  -- rw [add_eq_zero_iff_eq_neg] at h -- suggest_tactics
+  -- sorry
+  symm
+  apply neg_eq_of_add_eq_zero
+  rw [add_comm, h]
+  -- aesop
+  -- [3/4] 3/0
 
 theorem neg_zero : (-0 : R) = 0 := by
   apply neg_eq_of_add_eq_zero
@@ -132,7 +157,13 @@ variable {G : Type*} [Group G]
 namespace MyGroup
 
 theorem mul_right_inv (a : G) : a * a⁻¹ = 1 := by
-  sorry
+  -- simp [@eq_comm _ a] -- suggest_tactics
+  -- sorry
+  -- aesop
+  have h : (a * a⁻¹)⁻¹ * (a * a⁻¹ * (a * a⁻¹)) = 1 := by
+    rw [mul_assoc, ← mul_assoc a⁻¹ a, mul_left_inv, one_mul, mul_left_inv]
+  rw [← h, ← mul_assoc, mul_left_inv, one_mul]
+  -- [4/4] 0/0
 
 theorem mul_one (a : G) : a * 1 = a := by
   sorry
@@ -143,4 +174,3 @@ theorem mul_inv_rev (a b : G) : (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
 end MyGroup
 
 end
-

@@ -1,5 +1,14 @@
+-- 7 examples in this file, evaluated 2.
 import MIL.Common
 import Mathlib.Data.Real.Basic
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 namespace C02S04
 
@@ -41,14 +50,37 @@ example : min a b = min b a := by
 example : max a b = max b a := by
   sorry
 example : min (min a b) c = min a (min b c) := by
-  sorry
+  -- by_cases hbc : b = 0 -- suggest_tactics
+  -- sorry
+  apply le_antisymm
+  · apply le_min
+    · apply le_trans
+      apply min_le_left
+      apply min_le_left
+    -- aesop
+    apply le_min
+    · apply le_trans
+      apply min_le_left
+      apply min_le_right
+  -- aesop
+    apply min_le_right
+  apply le_min
+  · apply le_min
+    · apply min_le_left
+    apply le_trans
+    apply min_le_right
+    apply min_le_left
+  apply le_trans
+  apply min_le_right
+  apply min_le_right
+  -- [1/2] 4/1
 theorem aux : min a b + c ≤ min (a + c) (b + c) := by
   sorry
 example : min a b + c = min (a + c) (b + c) := by
   sorry
 #check (abs_add : ∀ a b : ℝ, |a + b| ≤ |a| + |b|)
 
-example : |a| - |b| ≤ |a - b| :=
+example : |a| - |b| ≤ |a - b| := by
   sorry
 end
 
@@ -78,7 +110,13 @@ variable (m n : ℕ)
 #check (Nat.lcm_zero_left n : Nat.lcm 0 n = 0)
 
 example : Nat.gcd m n = Nat.gcd n m := by
-  sorry
+  -- apply Nat.gcd_comm -- suggest_tactics
+  -- sorry
+  apply Nat.dvd_antisymm
+  repeat'
+    apply Nat.dvd_gcd
+    apply Nat.gcd_dvd_right
+    apply Nat.gcd_dvd_left
+  -- aesop
+  -- [2/2] /0
 end
-
-

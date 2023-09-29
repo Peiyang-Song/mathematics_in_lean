@@ -1,5 +1,15 @@
+-- 5 examples in this file, evaluated 2.
+
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import MIL.Common
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 variable (a b c d e : ℝ)
 open Real
@@ -44,7 +54,13 @@ example (x : ℝ) : x ≤ x :=
 
 -- Try this.
 example (h₀ : a ≤ b) (h₁ : b < c) (h₂ : c ≤ d) (h₃ : d < e) : a < e := by
-  sorry
+  -- linarith -- suggest_tactics
+  -- sorry
+  apply lt_of_le_of_lt h₀
+  apply lt_trans h₁
+  exact lt_of_le_of_lt h₂ h₃
+  -- aesop
+  -- [1/2] 3/0
 
 example (h₀ : a ≤ b) (h₁ : b < c) (h₂ : c ≤ d) (h₃ : d < e) : a < e := by
   linarith
@@ -101,7 +117,12 @@ example : 0 ≤ a ^ 2 := by
   exact sq_nonneg a
 
 example (h : a ≤ b) : c - exp b ≤ c - exp a := by
-  sorry
+  -- ring_nf -- suggest_tactics
+  -- sorry
+  apply sub_le_sub_left
+  -- aesop
+  exact exp_le_exp.mpr h
+  -- [2/2] 1/1
 
 example : 2 * a * b ≤ a ^ 2 + b ^ 2 := by
   have h : 0 ≤ a ^ 2 - 2 * a * b + b ^ 2
@@ -127,4 +148,3 @@ example : |a * b| ≤ (a ^ 2 + b ^ 2) / 2 := by
   sorry
 
 #check abs_le'.mpr
-

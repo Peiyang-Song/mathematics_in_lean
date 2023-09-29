@@ -1,13 +1,15 @@
+-- 6 examples in this file, evaluated 6.
+
 import MIL.Common
 import Mathlib.Data.Real.Basic
 
 import Aesop
 
-structure neuralConfig where
-  neuralProver : String
+-- structure neuralConfig where
+--   neuralProver : String
 
-@[aesop unsafe 50% neural]
-def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 -- An example.
 example (a b c : ℝ) : a * b * c = b * (a * c) := by
@@ -15,20 +17,28 @@ example (a b c : ℝ) : a * b * c = b * (a * c) := by
   rw [mul_assoc b a c]
 
 -- Try these.
--- example (a b c : ℝ) : c * b * a = b * (a * c) := by
---   -- sorry
+example (a b c : ℝ) : c * b * a = b * (a * c) := by
+  -- sorry
+  -- ring_nf -- suggest_tactics -- Yes.
+  rw [mul_comm c b]
+  rw [mul_assoc b c a]
+  rw [mul_comm c a]
+  -- aesop
+  -- [1/6] 3/0
+
+-- theorem my_thm (a b c : ℝ) : c * b * a = b * (a * c) := by
 --   aesop
---   -- [1] No. [2]: Yes.
 
-theorem my_thm (a b c : ℝ) : c * b * a = b * (a * c) := by
-  aesop
-
-#print axioms my_thm
+-- #print axioms my_thm
 
 example (a b c : ℝ) : a * (b * c) = b * (a * c) := by
   -- sorry
-  aesop
-  -- [1] No. [2]: Yes.
+  -- ring_nf -- suggest_tactics -- Yes.
+  rw [← mul_assoc a b c]
+  rw [mul_comm a b]
+  rw [mul_assoc b a c]
+  -- aesop
+  -- [2/6] 3/0
 
 -- An example.
 example (a b c : ℝ) : a * b * c = b * c * a := by
@@ -39,13 +49,20 @@ example (a b c : ℝ) : a * b * c = b * c * a := by
    and the second with only one argument. -/
 example (a b c : ℝ) : a * (b * c) = b * (c * a) := by
   -- sorry
-  aesop
-  -- [1] No. [2]: Yes, use `sorry`.
+  -- ring_nf -- suggest_tactics -- Yes.
+  rw [mul_comm]
+  rw [mul_assoc]
+  -- aesop
+  -- [3/6] 2/0
 
 example (a b c : ℝ) : a * (b * c) = b * (a * c) := by
   -- sorry
-  aesop
-  -- [1] No. [2]: Yes.
+  -- rw [mul_left_comm, ← mul_assoc] -- suggest_tactics -- Yes.
+  rw [← mul_assoc]
+  rw [mul_comm a]
+  rw [mul_assoc]
+  -- aesop
+  -- [4/6] 3/0
 
 -- Using facts from the local context.
 example (a b c d e f : ℝ) (h : a * b = c * d) (h' : e = f) : a * (b * e) = c * (d * f) := by
@@ -55,10 +72,23 @@ example (a b c d e f : ℝ) (h : a * b = c * d) (h' : e = f) : a * (b * e) = c *
   rw [mul_assoc]
 
 example (a b c d e f : ℝ) (h : b * c = e * f) : a * b * c * d = a * e * f * d := by
-  sorry
+  -- sorry
+  -- simp [h, mul_assoc] -- suggest_tactics -- Yes.
+  rw [mul_assoc a]
+  rw [h]
+  rw [← mul_assoc]
+  -- aesop
+  -- [5/6] 3/0
 
 example (a b c d : ℝ) (hyp : c = b * a - d) (hyp' : d = a * b) : c = 0 := by
-  sorry
+  -- sorry
+  -- rw [hyp] -- suggest_tactics -- No.
+  rw [hyp]
+  rw [hyp']
+  rw [mul_comm]
+  -- aesop
+  rw [sub_self]
+  -- [6/6] 3/0
 
 example (a b c d e f : ℝ) (h : a * b = c * d) (h' : e = f) : a * (b * e) = c * (d * f) := by
   rw [h', ← mul_assoc, h, mul_assoc]
