@@ -1,7 +1,17 @@
+-- 10 examples in this file, evaluated 3.
+
 import Mathlib.Data.Set.Lattice
 import Mathlib.Data.Nat.Prime
 import Mathlib.Data.Nat.Parity
 import MIL.Common
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 section
 variable {α : Type*}
@@ -48,7 +58,16 @@ example : s ∩ (t ∪ u) ⊆ s ∩ t ∪ s ∩ u := by
   . right; exact ⟨xs, xu⟩
 
 example : s ∩ t ∪ s ∩ u ⊆ s ∩ (t ∪ u) := by
-  sorry
+  -- intro x hx -- suggest_tactics
+  -- sorry
+  rintro x (⟨xs, xt⟩ | ⟨xs, xu⟩)
+  -- · aesop
+  -- · aesop
+  -- aesop
+  · use xs; left; exact xt
+  . use xs; right; exact xu
+  -- [1/3] 1/0
+
 example : (s \ t) \ u ⊆ s \ (t ∪ u) := by
   intro x xstu
   have xs : x ∈ s := xstu.1.1
@@ -69,6 +88,7 @@ example : (s \ t) \ u ⊆ s \ (t ∪ u) := by
 
 example : s \ (t ∪ u) ⊆ (s \ t) \ u := by
   sorry
+
 example : s ∩ t = t ∩ s := by
   ext x
   simp only [mem_inter_iff]
@@ -119,7 +139,19 @@ example (x : ℕ) : x ∈ (univ : Set ℕ) :=
   trivial
 
 example : { n | Nat.Prime n } ∩ { n | n > 2 } ⊆ { n | ¬Even n } := by
-  sorry
+  -- rintro _ ⟨n, npos, not_even, _⟩ -- suggest_tactics
+  -- sorry
+  intro n
+  simp
+  intro nprime
+  rcases Nat.Prime.eq_two_or_odd nprime with h | h
+  · rw [h]
+    intro
+    linarith
+  rw [Nat.even_iff, h]
+  -- aesop
+  norm_num
+  -- [2/3] 5/5
 
 #print Prime
 
@@ -197,7 +229,30 @@ example : (⋂ i, A i ∩ B i) = (⋂ i, A i) ∩ ⋂ i, B i := by
 
 
 example : (s ∪ ⋂ i, A i) = ⋂ i, A i ∪ s := by
-  sorry
+  -- rw [← iInter_union, iInter_union] -- suggest_tactics
+  -- sorry
+  ext x
+  simp only [mem_union, mem_iInter]
+  constructor
+  · rintro (xs | xI)
+    · intro i
+      right
+      exact xs
+    -- aesop
+    intro i
+    left
+    exact xI i
+  intro h
+  by_cases xs : x ∈ s
+  · left
+    exact xs
+  -- aesop
+  right
+  intro i
+  cases h i
+  · assumption
+  contradiction
+  -- [3/3] 11/0
 
 def primes : Set ℕ :=
   { x | Nat.Prime x }
@@ -239,4 +294,3 @@ example : ⋂₀ s = ⋂ t ∈ s, t := by
   rfl
 
 end
-

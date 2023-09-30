@@ -1,7 +1,17 @@
+-- 19 examples in this file, evaluated 6.
+
 import MIL.Common
 import Mathlib.Data.Set.Lattice
 import Mathlib.Data.Set.Function
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 section
 
@@ -37,19 +47,41 @@ example : f '' s ⊆ v ↔ s ⊆ f ⁻¹' v := by
   sorry
 
 example (h : Injective f) : f ⁻¹' (f '' s) ⊆ s := by
-  sorry
+  -- intro x hx -- suggest_tactics
+  -- sorry
+  rintro x ⟨y, ys, fxeq⟩
+  rw [← h fxeq]
+  -- aesop
+  exact ys
+  -- [1/6] 2/0
 
 example : f '' (f ⁻¹' u) ⊆ u := by
   sorry
 
 example (h : Surjective f) : u ⊆ f '' (f ⁻¹' u) := by
-  sorry
+  -- rw [h.image_preimage] -- suggest_tactics
+  -- sorry
+  intro y yu
+  -- aesop
+  rcases h y with ⟨x, fxeq⟩
+  use x
+  constructor
+  · show f x ∈ u
+    rw [fxeq]
+    exact yu
+  exact fxeq
+  -- [2/6] 1/0
 
 example (h : s ⊆ t) : f '' s ⊆ f '' t := by
   sorry
 
 example (h : u ⊆ v) : f ⁻¹' u ⊆ f ⁻¹' v := by
-  sorry
+  -- exact preimage_mono h -- suggest_tactics
+  -- sorry
+  intro x
+  -- aesop
+  apply h
+  -- [3/6] 1/0
 
 example : f ⁻¹' (u ∪ v) = f ⁻¹' u ∪ f ⁻¹' v := by
   sorry
@@ -76,7 +108,15 @@ example : s ∩ f ⁻¹' u ⊆ f ⁻¹' (f '' s ∩ u) := by
   sorry
 
 example : s ∪ f ⁻¹' u ⊆ f ⁻¹' (f '' s ∪ u) := by
-  sorry
+  -- rintro x hx -- suggest_tactics
+  -- sorry
+  rintro x (xs | fxu)
+  -- · aesop
+  -- aesop
+  · left
+    exact ⟨x, xs, rfl⟩
+  right; exact fxu
+  -- [4/6] 1/0
 
 variable {I : Type*} (A : I → Set α) (B : I → Set β)
 
@@ -152,7 +192,18 @@ example : sqrt '' { x | x ≥ 0 } = { y | y ≥ 0 } := by
   sorry
 
 example : (range fun x ↦ x ^ 2) = { y : ℝ | y ≥ 0 } := by
-  sorry
+  -- simp [Set.ext_iff] -- suggest_tactics
+  -- sorry
+  ext y
+  constructor
+  · rintro ⟨x, rfl⟩
+    dsimp at *
+    apply pow_two_nonneg
+  intro ynonneg
+  use sqrt y
+  -- aesop
+  exact sq_sqrt ynonneg
+  -- [5/6] 4/2
 
 end
 
@@ -186,8 +237,18 @@ open Function
 example : Injective f ↔ LeftInverse (inverse f) f :=
   sorry
 
-example : Surjective f ↔ RightInverse (inverse f) f :=
-  sorry
+example : Surjective f ↔ RightInverse (inverse f) f := by
+  -- constructor <;> intro r -- suggest_tactics
+  -- sorry
+  constructor
+  · intro h y
+    apply inverse_spec
+    apply h
+  intro h y
+  use inverse f y
+  -- aesop
+  apply h
+  -- [6/6] 3/1
 
 end
 
