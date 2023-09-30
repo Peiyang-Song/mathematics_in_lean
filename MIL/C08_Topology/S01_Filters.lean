@@ -5,11 +5,11 @@ import Mathlib.Topology.Instances.Real
 
 import Aesop
 
-structure neuralConfig where
-  neuralProver : String
+-- structure neuralConfig where
+--   neuralProver : String
 
-@[aesop unsafe 50% neural]
-def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 open Set Filter Topology
 
@@ -89,10 +89,13 @@ example : 𝓝 (x₀, y₀) = 𝓝 x₀ ×ˢ 𝓝 y₀ :=
 example (f : ℕ → ℝ × ℝ) (x₀ y₀ : ℝ) :
     Tendsto f atTop (𝓝 (x₀, y₀)) ↔
       Tendsto (Prod.fst ∘ f) atTop (𝓝 x₀) ∧ Tendsto (Prod.snd ∘ f) atTop (𝓝 y₀) := by
+  -- simp only [nhds_prod_eq, Function.comp, Prod.comp_apply, Prod.comp_apply, Prod.map_def, forall_const, and_true_iff] -- suggest_tactics
   -- sorry
   rw [nhds_prod_eq]
-  aesop
-  -- [1/1] /
+  unfold Tendsto SProd.sprod Filter.instSProd Filter.prod
+  erw [le_inf_iff, ← map_le_iff_le_comap, map_map, ← map_le_iff_le_comap, map_map]
+  -- aesop
+  -- [1/1] 3/1
 
 example (x₀ : ℝ) : HasBasis (𝓝 x₀) (fun ε : ℝ ↦ 0 < ε) fun ε ↦ Ioo (x₀ - ε) (x₀ + ε) :=
   nhds_basis_Ioo_pos x₀

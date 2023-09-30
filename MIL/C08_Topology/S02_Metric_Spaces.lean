@@ -1,6 +1,16 @@
+-- 3 examples in this file, evaluated 1.
+
 import MIL.Common
 import Mathlib.Topology.Instances.Real
 import Mathlib.Analysis.NormedSpace.BanachSteinhaus
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 open Set Filter
 open Topology Filter
@@ -83,8 +93,17 @@ example {s : Set X} : a ∈ closure s ↔ ∀ ε > 0, ∃ b ∈ s, a ∈ Metric.
   Metric.mem_closure_iff
 
 example {u : ℕ → X} (hu : Tendsto u atTop (𝓝 a)) {s : Set X} (hs : ∀ n, u n ∈ s) :
-    a ∈ closure s :=
-  sorry
+    a ∈ closure s := by
+  -- sorry
+  rw [Metric.tendsto_atTop] at hu
+  rw [Metric.mem_closure_iff]
+  intro ε ε_pos
+  rcases hu ε ε_pos with ⟨N, hN⟩
+  refine' ⟨u N, hs _, _⟩
+  rw [dist_comm]
+  -- aesop
+  exact hN N le_rfl
+  -- [1/1] 6/5
 
 example {x : X} {s : Set X} : s ∈ 𝓝 x ↔ ∃ ε > 0, Metric.ball x ε ⊆ s :=
   Metric.nhds_basis_ball.mem_iff
@@ -204,4 +223,3 @@ example [CompleteSpace X] (f : ℕ → Set X) (ho : ∀ n, IsOpen (f n)) (hd : �
   have I : ∀ n, ∀ m ≥ n, closedBall (c m) (r m) ⊆ closedBall (c n) (r n) := by sorry
   have yball : ∀ n, y ∈ closedBall (c n) (r n) := by sorry
   sorry
-

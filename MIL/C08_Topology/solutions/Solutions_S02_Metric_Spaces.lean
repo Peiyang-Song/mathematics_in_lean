@@ -90,6 +90,7 @@ example {u : ℕ → X} (hu : Tendsto u atTop (𝓝 a)) {s : Set X} (hs : ∀ n,
   sorry
 
 example {u : ℕ → X} (hu : Tendsto u atTop (𝓝 a)) {s : Set X} (hs : ∀ n, u n ∈ s) : a ∈ closure s := by
+  -- rw [tendsto_nhds] at hu -- suggest_tactics
   rw [Metric.tendsto_atTop] at hu
   rw [Metric.mem_closure_iff]
   intro ε ε_pos
@@ -368,5 +369,3 @@ example [CompleteSpace X] (f : ℕ → Set X) (ho : ∀ n, IsOpen (f n)) (hd : �
   calc
     dist y x ≤ r 0 := yball 0
     _ ≤ ε := min_le_left _ _
-
-
