@@ -1,3 +1,5 @@
+-- 1 examples in this file, evaluated 1.
+
 import MIL.Common
 import Mathlib.Topology.Instances.Real
 
@@ -64,9 +66,7 @@ example {X Y : Type*} (f : X → Y) (F : Filter X) (G : Filter Y) :
 
 example {X Y Z : Type*} {F : Filter X} {G : Filter Y} {H : Filter Z} {f : X → Y} {g : Y → Z}
     (hf : Tendsto₁ f F G) (hg : Tendsto₁ g G H) : Tendsto₁ (g ∘ f) F H :=
-  -- sorry
-  by aesop
-  -- [1] No. [2]: Yes.
+  sorry
 
 variable (f : ℝ → ℝ) (x₀ y₀ : ℝ)
 
@@ -88,8 +88,11 @@ example : 𝓝 (x₀, y₀) = 𝓝 x₀ ×ˢ 𝓝 y₀ :=
 
 example (f : ℕ → ℝ × ℝ) (x₀ y₀ : ℝ) :
     Tendsto f atTop (𝓝 (x₀, y₀)) ↔
-      Tendsto (Prod.fst ∘ f) atTop (𝓝 x₀) ∧ Tendsto (Prod.snd ∘ f) atTop (𝓝 y₀) :=
-  sorry
+      Tendsto (Prod.fst ∘ f) atTop (𝓝 x₀) ∧ Tendsto (Prod.snd ∘ f) atTop (𝓝 y₀) := by
+  -- sorry
+  rw [nhds_prod_eq]
+  aesop
+  -- [1/1] /
 
 example (x₀ : ℝ) : HasBasis (𝓝 x₀) (fun ε : ℝ ↦ 0 < ε) fun ε ↦ Ioo (x₀ - ε) (x₀ + ε) :=
   nhds_basis_Ioo_pos x₀
