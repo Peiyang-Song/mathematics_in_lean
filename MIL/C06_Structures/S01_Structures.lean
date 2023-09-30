@@ -1,6 +1,16 @@
+-- 4 examples in this file, evaluated 1.
+
 import MIL.Common
 import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Data.Real.Basic
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 namespace C06S01
 noncomputable section
@@ -81,7 +91,11 @@ theorem addAlt_comm (a b : Point) : addAlt a b = addAlt b a := by
   repeat' apply add_comm
 
 protected theorem add_assoc (a b c : Point) : (a.add b).add c = a.add (b.add c) := by
-  sorry
+  -- simp [add, add_comm, add_left_comm] -- suggest_tactics
+  -- sorry
+  simp [add, add_assoc]
+  -- aesop
+  -- [1/1] 1/0
 
 def smul (r : ℝ) (a : Point) : Point :=
   sorry
@@ -206,4 +220,3 @@ variable (s : StdSimplex)
 #check s.2
 
 end
-

@@ -1,7 +1,17 @@
+-- 4 examples in this file, evaluated 1.
+
 import Mathlib.Data.Int.Basic
 import Mathlib.Algebra.EuclideanDomain.Basic
 import Mathlib.RingTheory.PrincipalIdealDomain
 import MIL.Common
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 @[ext]
 structure gaussInt where
@@ -183,7 +193,13 @@ def norm (x : gaussInt) :=
 
 @[simp]
 theorem norm_nonneg (x : gaussInt) : 0 ≤ norm x := by
-  sorry
+  -- apply norm_nonneg -- suggest_tactics
+  -- sorry
+  apply add_nonneg <;>
+  apply sq_nonneg
+  -- aesop
+  -- [1/1] 2/0
+
 theorem norm_eq_zero (x : gaussInt) : norm x = 0 ↔ x = 0 := by
   sorry
 theorem norm_pos (x : gaussInt) : 0 < norm x ↔ x ≠ 0 := by
