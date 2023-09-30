@@ -1,4 +1,4 @@
--- 7 examples in this file, evaluated 2.
+-- 7 examples in this file, evaluated 3.
 import MIL.Common
 import Mathlib.Data.Real.Basic
 
@@ -48,7 +48,16 @@ example : min a b = min b a := by
     apply min_le_left
 
 example : max a b = max b a := by
-  sorry
+  -- simp_rw [max_def] -- suggest_tactics
+  -- sorry
+  apply le_antisymm
+  repeat'
+    apply max_le
+    apply le_max_right
+    -- aesop
+    apply le_max_left
+  -- [1/3] 4/0
+
 example : min (min a b) c = min a (min b c) := by
   -- by_cases hbc : b = 0 -- suggest_tactics
   -- sorry
@@ -73,7 +82,7 @@ example : min (min a b) c = min a (min b c) := by
   apply le_trans
   apply min_le_right
   apply min_le_right
-  -- [1/2] 4/1
+  -- [2/3] 4/1
 theorem aux : min a b + c ≤ min (a + c) (b + c) := by
   sorry
 example : min a b + c = min (a + c) (b + c) := by
@@ -118,5 +127,5 @@ example : Nat.gcd m n = Nat.gcd n m := by
     apply Nat.gcd_dvd_right
     apply Nat.gcd_dvd_left
   -- aesop
-  -- [2/2] /0
+  -- [3/3] /0
 end

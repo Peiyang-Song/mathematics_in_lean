@@ -1,4 +1,4 @@
--- 12 examples in this file, evaluated 3.
+-- 7 examples in this file, evaluated 3.
 import MIL.Common
 import Mathlib.Data.Real.Basic
 

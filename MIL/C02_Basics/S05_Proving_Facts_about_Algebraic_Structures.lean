@@ -1,14 +1,14 @@
--- 12 examples in this file, evaluated 3.
+-- 12 examples in this file, evaluated 5.
 import MIL.Common
 import Mathlib.Topology.MetricSpace.Basic
 
 import Aesop
 
--- structure neuralConfig where
---   neuralProver : String
+structure neuralConfig where
+  neuralProver : String
 
--- @[aesop unsafe 50% neural]
--- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
+@[aesop unsafe 50% neural]
+def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 section
 variable {α : Type*} [PartialOrder α]
@@ -46,13 +46,57 @@ example : x ⊓ y = y ⊓ x := by
   sorry
 
 example : x ⊓ y ⊓ z = x ⊓ (y ⊓ z) := by
-  sorry
+  -- rw [← inf_assoc, inf_right_comm] -- suggest_tactics
+  -- sorry
+  apply le_antisymm
+  · apply le_inf
+    · apply le_trans
+      apply inf_le_left
+      apply inf_le_left
+    apply le_inf
+    · apply le_trans
+      apply inf_le_left
+      apply inf_le_right
+    apply inf_le_right
+  apply le_inf
+  · apply le_inf
+    · apply inf_le_left
+    apply le_trans
+    apply inf_le_right
+    apply inf_le_left
+  apply le_trans
+  apply inf_le_right
+  -- aesop
+  apply inf_le_right
+  -- [1/5] 18/0
 
 example : x ⊔ y = y ⊔ x := by
   sorry
 
 example : x ⊔ y ⊔ z = x ⊔ (y ⊔ z) := by
-  sorry
+  -- simp only [sup_assoc, sup_assoc] -- suggest_tactics
+  -- sorry
+  -- aesop
+  apply le_antisymm
+  · apply sup_le
+    · apply sup_le
+      apply le_sup_left
+      · apply le_trans
+        apply @le_sup_left _ _ y z
+        apply le_sup_right
+    apply le_trans
+    apply @le_sup_right _ _ y z
+    apply le_sup_right
+  apply sup_le
+  · apply le_trans
+    apply @le_sup_left _ _ x y
+    apply le_sup_left
+  apply sup_le
+  · apply le_trans
+    apply @le_sup_right _ _ x y
+    apply le_sup_left
+  apply le_sup_right
+  -- [2/5] 0/0
 
 theorem absorb1 : x ⊓ (x ⊔ y) = x := by
   sorry
@@ -97,7 +141,7 @@ theorem aux1 (h : a ≤ b) : 0 ≤ b - a := by
   -- rwa [sub_nonneg] -- suggest_tactics
   -- sorry
   aesop
-  -- [1/3] 0/0
+  -- [3/5] 0/0
 
 theorem aux2 (h: 0 ≤ b - a) : a ≤ b := by
   sorry
@@ -109,7 +153,7 @@ example (h : a ≤ b) (h' : 0 ≤ c) : a * c ≤ b * c := by
   rw [sub_mul] at h1
   -- aesop
   exact aux2 _ _ h1
-  -- [2/3] 2/0
+  -- [4/5] 2/0
 
 end
 
@@ -129,6 +173,6 @@ example (x y : X) : 0 ≤ dist x y := by
     apply dist_triangle
   linarith [dist_comm x y]
   -- aesop
-  -- [3/3] 4/0
+  -- [5/5] 4/0
 
 end

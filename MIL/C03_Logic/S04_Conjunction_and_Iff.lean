@@ -1,4 +1,4 @@
--- 5 examples in this file, evaluated 2.
+-- 4 examples in this file, evaluated 2.
 
 import MIL.Common
 import Mathlib.Data.Real.Basic
@@ -6,11 +6,11 @@ import Mathlib.Data.Nat.Prime
 
 import Aesop
 
--- structure neuralConfig where
---   neuralProver : String
+structure neuralConfig where
+  neuralProver : String
 
--- @[aesop unsafe 50% neural]
--- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
+@[aesop unsafe 50% neural]
+def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 namespace C03S04
 
@@ -74,7 +74,16 @@ example {x y : ℝ} (h : x ≤ y ∧ x ≠ y) : ¬y ≤ x :=
   fun h' ↦ h.right (le_antisymm h.left h')
 
 example {m n : ℕ} (h : m ∣ n ∧ m ≠ n) : m ∣ n ∧ ¬n ∣ m := by
-  sorry
+  -- constructor -- suggest_tactics
+  -- sorry
+  rcases h with ⟨h0, h1⟩
+  constructor
+  · exact h0
+  intro h2
+  apply h1
+  apply Nat.dvd_antisymm h0 h2
+  -- aesop
+  -- [1/2] 5/5
 
 example : ∃ x : ℝ, 2 < x ∧ x < 4 :=
   ⟨5 / 2, by norm_num, by norm_num⟩
@@ -115,13 +124,7 @@ example {x y : ℝ} : x ≤ y ∧ ¬y ≤ x ↔ x ≤ y ∧ x ≠ y :=
   sorry
 
 theorem aux {x y : ℝ} (h : x ^ 2 + y ^ 2 = 0) : x = 0 :=
-  -- rw [eq_comm] at h -- by suggest_tactics
-  -- have h' : x ^ 2 = 0 := by sorry
-  -- pow_eq_zero h'
-  have h' : x ^ 2 = 0 := by linarith [pow_two_nonneg x, pow_two_nonneg y]
-  -- by aesop
-  pow_eq_zero h'
-  -- [1/2] 1/0
+  sorry
 
 example (x y : ℝ) : x ^ 2 + y ^ 2 = 0 ↔ x = 0 ∧ y = 0 :=
   sorry

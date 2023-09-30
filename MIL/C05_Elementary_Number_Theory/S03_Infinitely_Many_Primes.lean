@@ -106,7 +106,7 @@ example : (r ∪ s) ∩ (r ∪ t) = r ∪ s ∩ t := by
   -- aesop
   simp
   tauto
-  -- [1/1] 1/0
+  -- [1/2] 1/0
 
 example : (r \ s) \ t = r \ (s ∪ t) := by
   sorry
@@ -119,7 +119,12 @@ example (s : Finset ℕ) (n : ℕ) (h : n ∈ s) : n ∣ ∏ i in s, i :=
 theorem _root_.Nat.Prime.eq_of_dvd_of_prime {p q : ℕ}
       (prime_p : Nat.Prime p) (prime_q : Nat.Prime q) (h : p ∣ q) :
     p = q := by
-  sorry
+  -- induction' h with a b ih -- suggest_tactics
+  -- sorry
+  cases prime_q.eq_one_or_self_of_dvd _ h
+  · linarith [prime_p.two_le]
+  aesop
+  -- [2/2] 1/1
 
 theorem mem_of_dvd_prod_primes {s : Finset ℕ} {p : ℕ} (prime_p : p.Prime) :
     (∀ n ∈ s, Nat.Prime n) → (p ∣ ∏ n in s, n) → p ∈ s := by

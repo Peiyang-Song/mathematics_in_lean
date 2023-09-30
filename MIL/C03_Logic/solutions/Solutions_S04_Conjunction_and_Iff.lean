@@ -4,13 +4,13 @@ import Mathlib.Data.Nat.Prime
 
 namespace C03S04
 
-example {m n : ℕ} (h : m ∣ n ∧ m ≠ n) : m ∣ n ∧ ¬n ∣ m := by
-  rcases h with ⟨h0, h1⟩
-  constructor
-  · exact h0
-  intro h2
-  apply h1
-  apply Nat.dvd_antisymm h0 h2
+  example {m n : ℕ} (h : m ∣ n ∧ m ≠ n) : m ∣ n ∧ ¬n ∣ m := by
+    rcases h with ⟨h0, h1⟩
+    constructor
+    · exact h0
+    intro h2
+    apply h1
+    apply Nat.dvd_antisymm h0 h2
 
 example {x y : ℝ} : x ≤ y ∧ ¬y ≤ x ↔ x ≤ y ∧ x ≠ y := by
   constructor

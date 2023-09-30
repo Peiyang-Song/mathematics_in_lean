@@ -61,7 +61,7 @@ example (h : Monotone f) (h' : f a < f b) : a < b := by
   apply absurd h'
   apply not_lt_of_ge (h h'')
   -- aesop
-  -- [1/2] 4/0
+  -- [1/4] 4/0
 
 example (h : a ≤ b) (h' : f b < f a) : ¬Monotone f := by
   sorry
@@ -74,7 +74,13 @@ example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b}, f a ≤ f b → a �
   sorry
 
 example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
-  sorry
+  -- by_contra' hn -- suggest_tactics
+  -- sorry
+  apply le_of_not_gt
+  intro h'
+  linarith [h _ h']
+  -- aesop
+  -- [2/4] 3/1
 
 end
 
@@ -82,7 +88,13 @@ section
 variable {α : Type*} (P : α → Prop) (Q : Prop)
 
 example (h : ¬∃ x, P x) : ∀ x, ¬P x := by
-  sorry
+  -- simpa [not_exists] using h -- suggest_tactics
+  -- sorry
+  -- aesop
+  intro x Px
+  apply h
+  use x
+  -- [3/4] 0/0
 
 example (h : ∀ x, ¬P x) : ¬∃ x, P x := by
   sorry
@@ -131,7 +143,7 @@ example (h : ¬Monotone f) : ∃ x y, x ≤ y ∧ f y < f x := by
   -- aesop
   push_neg  at h
   exact h
-  -- [2/2] 1/0
+  -- [4/4] 1/0
 
 example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
   contrapose! h

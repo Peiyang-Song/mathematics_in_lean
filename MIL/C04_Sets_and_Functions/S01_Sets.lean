@@ -1,4 +1,4 @@
--- 10 examples in this file, evaluated 3.
+-- 10 examples in this file, evaluated 4.
 
 import Mathlib.Data.Set.Lattice
 import Mathlib.Data.Nat.Prime
@@ -66,7 +66,7 @@ example : s ∩ t ∪ s ∩ u ⊆ s ∩ (t ∪ u) := by
   -- aesop
   · use xs; left; exact xt
   . use xs; right; exact xu
-  -- [1/3] 1/0
+  -- [1/4] 1/0
 
 example : (s \ t) \ u ⊆ s \ (t ∪ u) := by
   intro x xstu
@@ -151,7 +151,7 @@ example : { n | Nat.Prime n } ∩ { n | n > 2 } ⊆ { n | ¬Even n } := by
   rw [Nat.even_iff, h]
   -- aesop
   norm_num
-  -- [2/3] 5/5
+  -- [2/4] 5/5
 
 #print Prime
 
@@ -252,7 +252,7 @@ example : (s ∪ ⋂ i, A i) = ⋂ i, A i ∪ s := by
   cases h i
   · assumption
   contradiction
-  -- [3/3] 11/0
+  -- [3/4] 11/0
 
 def primes : Set ℕ :=
   { x | Nat.Prime x }
@@ -273,7 +273,15 @@ example : (⋂ p ∈ primes, { x | ¬p ∣ x }) ⊆ { x | x = 1 } := by
   apply Nat.exists_prime_and_dvd
 
 example : (⋃ p ∈ primes, { x | x ≤ p }) = univ := by
-  sorry
+  -- ext n -- suggest_tactics
+  -- sorry
+  apply eq_univ_of_forall
+  intro x
+  simp
+  rcases Nat.exists_infinite_primes x with ⟨p, primep, pge⟩
+  -- aesop
+  use p, pge
+  -- [4/4] 4/4
 
 end
 

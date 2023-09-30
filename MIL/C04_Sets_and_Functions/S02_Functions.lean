@@ -1,4 +1,4 @@
--- 19 examples in this file, evaluated 6.
+-- 19 examples in this file, evaluated 7.
 
 import MIL.Common
 import Mathlib.Data.Set.Lattice
@@ -53,7 +53,7 @@ example (h : Injective f) : f ⁻¹' (f '' s) ⊆ s := by
   rw [← h fxeq]
   -- aesop
   exact ys
-  -- [1/6] 2/0
+  -- [1/7] 2/0
 
 example : f '' (f ⁻¹' u) ⊆ u := by
   sorry
@@ -70,7 +70,7 @@ example (h : Surjective f) : u ⊆ f '' (f ⁻¹' u) := by
     rw [fxeq]
     exact yu
   exact fxeq
-  -- [2/6] 1/0
+  -- [2/7] 1/0
 
 example (h : s ⊆ t) : f '' s ⊆ f '' t := by
   sorry
@@ -81,7 +81,7 @@ example (h : u ⊆ v) : f ⁻¹' u ⊆ f ⁻¹' v := by
   intro x
   -- aesop
   apply h
-  -- [3/6] 1/0
+  -- [3/7] 1/0
 
 example : f ⁻¹' (u ∪ v) = f ⁻¹' u ∪ f ⁻¹' v := by
   sorry
@@ -90,7 +90,17 @@ example : f '' (s ∩ t) ⊆ f '' s ∩ f '' t := by
   sorry
 
 example (h : Injective f) : f '' s ∩ f '' t ⊆ f '' (s ∩ t) := by
-  sorry
+  -- rintro _ ⟨u, v, hu, rfl, rfl⟩ -- suggest_tactics
+  -- sorry
+  rintro y ⟨⟨x₁, x₁s, rfl⟩, ⟨x₂, x₂t, fx₂eq⟩⟩
+  use x₁
+  constructor
+  . use x₁s
+    rw [← h fx₂eq]
+    exact x₂t
+  -- aesop
+  . rfl
+  -- [4/7] 6/0
 
 example : f '' s \ f '' t ⊆ f '' (s \ t) := by
   sorry
@@ -116,7 +126,7 @@ example : s ∪ f ⁻¹' u ⊆ f ⁻¹' (f '' s ∪ u) := by
   · left
     exact ⟨x, xs, rfl⟩
   right; exact fxu
-  -- [4/6] 1/0
+  -- [5/7] 1/0
 
 variable {I : Type*} (A : I → Set α) (B : I → Set β)
 
@@ -203,7 +213,7 @@ example : (range fun x ↦ x ^ 2) = { y : ℝ | y ≥ 0 } := by
   use sqrt y
   -- aesop
   exact sq_sqrt ynonneg
-  -- [5/6] 4/2
+  -- [6/7] 4/2
 
 end
 
@@ -248,7 +258,7 @@ example : Surjective f ↔ RightInverse (inverse f) f := by
   use inverse f y
   -- aesop
   apply h
-  -- [6/6] 3/1
+  -- [7/7] 3/1
 
 end
 

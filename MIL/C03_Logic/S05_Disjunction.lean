@@ -1,4 +1,4 @@
--- 11 examples in this file, evaluated 3.
+-- 11 examples in this file, evaluated 4.
 
 import MIL.Common
 import Mathlib.Data.Real.Basic
@@ -80,7 +80,7 @@ theorem neg_le_abs_self (x : ℝ) : -x ≤ |x| := by
     -- linarith
   . rw [abs_of_neg h]
   -- aesop
-  -- [1/3] 3/3
+  -- [1/4] 3/3
 
 theorem abs_add (x y : ℝ) : |x + y| ≤ |x| + |y| := by
   sorry
@@ -110,7 +110,11 @@ example {m n k : ℕ} (h : m ∣ n ∨ m ∣ k) : m ∣ n * k := by
     apply dvd_mul_right
 
 example {z : ℝ} (h : ∃ x y, z = x ^ 2 + y ^ 2 ∨ z = x ^ 2 + y ^ 2 + 1) : z ≥ 0 := by
-  sorry
+  -- rcases h with ⟨x, y, rfl, rfl⟩ -- suggest_tactics
+  -- sorry
+  rcases h with ⟨x, y, rfl | rfl⟩ <;> linarith [sq_nonneg x, sq_nonneg y]
+  -- aesop
+  -- [2/4] /0
 
 example {x : ℝ} (h : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
   sorry
@@ -128,7 +132,7 @@ example {x y : ℝ} (h : x ^ 2 = y ^ 2) : x = y ∨ x = -y := by
   . left
     exact eq_of_sub_eq_zero h1
   -- aesop
-  -- [2/3] 7/2
+  -- [3/4] 7/2
 
 section
 variable {R : Type*} [CommRing R] [IsDomain R]
@@ -170,4 +174,4 @@ example (P Q : Prop) : P → Q ↔ ¬P ∨ Q := by
     exact absurd h' h
   . intro
     exact h
-  -- [3/3] 7/0
+  -- [4/4] 7/0

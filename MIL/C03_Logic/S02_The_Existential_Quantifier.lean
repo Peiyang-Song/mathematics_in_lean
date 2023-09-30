@@ -1,4 +1,4 @@
--- 4 examples in this file, evaluated 1.
+-- 4 examples in this file, evaluated 2.
 
 import MIL.Common
 import Mathlib.Data.Real.Basic
@@ -62,7 +62,15 @@ example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
   apply fnUb_add ubfa ubgb
 
 example (lbf : FnHasLb f) (lbg : FnHasLb g) : FnHasLb fun x ↦ f x + g x := by
-  sorry
+  -- let t := fun x => ((f x + g x) / (g x) + g x) -- suggest_tactics
+  -- sorry
+  rcases lbf with ⟨a, lbfa⟩
+  rcases lbg with ⟨b, lbgb⟩
+  use a + b
+  intro x
+  -- aesop
+  exact mul_le_mul_of_nonneg_left (lbfa x) h
+  -- [1/2] 5/4
 
 example {c : ℝ} (ubf : FnHasUb f) (h : c ≥ 0) : FnHasUb fun x ↦ c * f x := by
   sorry
