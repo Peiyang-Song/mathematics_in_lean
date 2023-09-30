@@ -1,6 +1,16 @@
+-- 1 examples in this file, evaluated 0.
+
 import MIL.Common
 import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.Data.Nat.Prime
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 #print Nat.coprime
 
@@ -68,7 +78,35 @@ example {m n : ℕ} (coprime_mn : m.coprime n) : m ^ 2 ≠ 2 * n ^ 2 := by
   norm_num at this
 
 example {m n p : ℕ} (coprime_mn : m.coprime n) (prime_p : p.Prime) : m ^ 2 ≠ p * n ^ 2 := by
-  sorry
+  -- sorry
+  intro sqr_eq
+  have : p ∣ m := by
+    apply prime_p.dvd_of_dvd_pow
+    rw [sqr_eq]
+    apply dvd_mul_right
+  obtain ⟨k, meq⟩ := dvd_iff_exists_eq_mul_left.mp this
+  have : p * (p * k ^ 2) = p * n ^ 2 := by
+    rw [← sqr_eq, meq]
+    ring
+  have : p * k ^ 2 = n ^ 2 := by
+    apply (mul_right_inj' _).mp this
+    exact prime_p.ne_zero
+  have : p ∣ n := by
+    apply prime_p.dvd_of_dvd_pow
+    rw [← this]
+    apply dvd_mul_right
+  have : p ∣ Nat.gcd m n := by apply Nat.dvd_gcd <;> assumption
+  -- aesop
+  have : p ∣ 1 := by
+    convert this
+    symm
+    exact coprime_mn
+  have : 2 ≤ 1 := by
+    apply prime_p.two_le.trans
+    exact Nat.le_of_dvd zero_lt_one this
+  norm_num at this
+  -- [1/1] Same
+
 #check Nat.factors
 #check Nat.prime_of_mem_factors
 #check Nat.prod_factors
@@ -117,4 +155,3 @@ example {m n k r : ℕ} (nnz : n ≠ 0) (pow_eq : m ^ k = r * n ^ k) {p : ℕ} (
   sorry
 
 #check multiplicity
-

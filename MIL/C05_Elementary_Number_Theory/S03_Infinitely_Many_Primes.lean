@@ -1,6 +1,16 @@
+-- 4 examples in this file, evaluated 1.
+
 import Mathlib.Data.Nat.Prime
 import Mathlib.Algebra.BigOperators.Order
 import MIL.Common
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 open BigOperators
 
@@ -90,7 +100,14 @@ section
 variable {α : Type*} [DecidableEq α] (r s t : Finset α)
 
 example : (r ∪ s) ∩ (r ∪ t) = r ∪ s ∩ t := by
-  sorry
+  -- ext x -- suggest_tactics
+  -- sorry
+  ext x
+  -- aesop
+  simp
+  tauto
+  -- [1/1] 1/0
+
 example : (r \ s) \ t = r \ (s ∪ t) := by
   sorry
 
@@ -226,4 +243,3 @@ theorem primes_mod_4_eq_3_infinite : ∀ n, ∃ p > n, Nat.Prime p ∧ p % 4 = 3
   have : p = 3 := by
     sorry
   contradiction
-
