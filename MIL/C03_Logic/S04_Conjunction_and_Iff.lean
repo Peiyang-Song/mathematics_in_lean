@@ -1,6 +1,16 @@
+-- 5 examples in this file, evaluated 2.
+
 import MIL.Common
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Nat.Prime
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 namespace C03S04
 
@@ -63,7 +73,7 @@ example {x y : ℝ} (h : x ≤ y ∧ x ≠ y) : ¬y ≤ x := by
 example {x y : ℝ} (h : x ≤ y ∧ x ≠ y) : ¬y ≤ x :=
   fun h' ↦ h.right (le_antisymm h.left h')
 
-example {m n : ℕ} (h : m ∣ n ∧ m ≠ n) : m ∣ n ∧ ¬n ∣ m :=
+example {m n : ℕ} (h : m ∣ n ∧ m ≠ n) : m ∣ n ∧ ¬n ∣ m := by
   sorry
 
 example : ∃ x : ℝ, 2 < x ∧ x < 4 :=
@@ -105,8 +115,13 @@ example {x y : ℝ} : x ≤ y ∧ ¬y ≤ x ↔ x ≤ y ∧ x ≠ y :=
   sorry
 
 theorem aux {x y : ℝ} (h : x ^ 2 + y ^ 2 = 0) : x = 0 :=
-  have h' : x ^ 2 = 0 := by sorry
+  -- rw [eq_comm] at h -- by suggest_tactics
+  -- have h' : x ^ 2 = 0 := by sorry
+  -- pow_eq_zero h'
+  have h' : x ^ 2 = 0 := by linarith [pow_two_nonneg x, pow_two_nonneg y]
+  -- by aesop
   pow_eq_zero h'
+  -- [1/2] 1/0
 
 example (x y : ℝ) : x ^ 2 + y ^ 2 = 0 ↔ x = 0 ∧ y = 0 :=
   sorry
@@ -151,7 +166,17 @@ example : ¬a < a := by
   sorry
 
 example : a < b → b < c → a < c := by
+  -- rintro hab hbc -- suggest_tactics
+  -- simp only [lt_iff_le_not_le]
+  -- sorry
   simp only [lt_iff_le_not_le]
-  sorry
+  rintro ⟨h0, h1⟩ ⟨h2, h3⟩
+  constructor
+  · apply le_trans h0 h2
+  intro h4
+  apply h1
+  apply le_trans h2 h4
+  -- aesop
+  -- [2/2] /0
 
 end

@@ -1,5 +1,15 @@
+-- 8 examples in this file, evaluated 2.
+
 import MIL.Common
 import Mathlib.Data.Real.Basic
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 namespace C03S03
 
@@ -44,7 +54,14 @@ example : ¬FnHasUb fun x ↦ x :=
 #check (le_of_not_gt : ¬a > b → a ≤ b)
 
 example (h : Monotone f) (h' : f a < f b) : a < b := by
-  sorry
+  -- let d := f a -- suggest_tactics
+  -- sorry
+  apply lt_of_not_ge
+  intro h''
+  apply absurd h'
+  apply not_lt_of_ge (h h'')
+  -- aesop
+  -- [1/2] 4/0
 
 example (h : a ≤ b) (h' : f b < f a) : ¬Monotone f := by
   sorry
@@ -108,7 +125,13 @@ example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
   exact h
 
 example (h : ¬Monotone f) : ∃ x y, x ≤ y ∧ f y < f x := by
-  sorry
+  -- contrapose! h with H -- suggest_tactics
+  -- sorry
+  rw [Monotone] at h
+  -- aesop
+  push_neg  at h
+  exact h
+  -- [2/2] 1/0
 
 example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
   contrapose! h
@@ -136,4 +159,3 @@ example (h : 0 < 0) : a > 37 := by
   contradiction
 
 end
-

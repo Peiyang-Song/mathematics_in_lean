@@ -1,5 +1,14 @@
+-- 12 examples in this file, evaluated 3.
 import MIL.Common
 import Mathlib.Data.Real.Basic
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 namespace C03S01
 
@@ -70,8 +79,17 @@ example (nnf : FnLb f 0) (nng : FnLb g 0) : FnLb (fun x ↦ f x * g x) 0 :=
   sorry
 
 example (hfa : FnUb f a) (hgb : FnUb g b) (nng : FnLb g 0) (nna : 0 ≤ a) :
-    FnUb (fun x ↦ f x * g x) (a * b) :=
-  sorry
+    FnUb (fun x ↦ f x * g x) (a * b) := by
+  -- sorry
+  -- rcases eq_or_lt_of_le nna with (rfl | hnl) -- suggest_tactics
+  intro x
+  apply mul_le_mul
+  -- aesop
+  apply hfa
+  apply hgb
+  apply nng
+  apply nna
+  -- [1/3] 2/1
 
 end
 
@@ -103,11 +121,18 @@ example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f x + g x := by
 example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f x + g x :=
   fun a b aleb ↦ add_le_add (mf aleb) (mg aleb)
 
-example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x :=
+example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x := by
   sorry
 
-example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f (g x) :=
-  sorry
+example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f (g x) := by
+  -- sorry
+  -- intro x yn -- suggest_tactics
+  intro a b aleb
+  -- aesop
+  apply mf
+  apply mg
+  apply aleb
+  -- [2/3] 1/0
 
 def FnEven (f : ℝ → ℝ) : Prop :=
   ∀ x, f x = f (-x)
@@ -175,6 +200,13 @@ variable {α : Type*} {β : Type*} {γ : Type*}
 variable {g : β → γ} {f : α → β}
 
 example (injg : Injective g) (injf : Injective f) : Injective fun x ↦ g (f x) := by
-  sorry
+  -- sorry
+  -- intro x y h -- suggest_tactics
+  intro x₁ x₂ h
+  -- aesop
+  apply injf
+  apply injg
+  apply h
+  -- [3/3] 1/0
 
 end

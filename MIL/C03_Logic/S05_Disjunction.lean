@@ -1,5 +1,15 @@
+-- 11 examples in this file, evaluated 3.
+
 import MIL.Common
 import Mathlib.Data.Real.Basic
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 namespace C03S05
 
@@ -62,7 +72,15 @@ theorem le_abs_self (x : ℝ) : x ≤ |x| := by
   sorry
 
 theorem neg_le_abs_self (x : ℝ) : -x ≤ |x| := by
-  sorry
+  -- simpa using x -- suggest_tactics
+  -- sorry
+  rcases le_or_gt 0 x with h | h
+  · rw [abs_of_nonneg h]
+    aesop
+    -- linarith
+  . rw [abs_of_neg h]
+  -- aesop
+  -- [1/3] 3/3
 
 theorem abs_add (x y : ℝ) : |x + y| ≤ |x| + |y| := by
   sorry
@@ -98,7 +116,19 @@ example {x : ℝ} (h : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
   sorry
 
 example {x y : ℝ} (h : x ^ 2 = y ^ 2) : x = y ∨ x = -y := by
-  sorry
+  -- let x := x ^ 2 -- suggest_tactics
+  -- sorry
+  have h' : x ^ 2 - y ^ 2 = 0 := by rw [h, sub_self]
+  have h'' : (x + y) * (x - y) = 0 := by
+    rw [← h']
+    ring
+  rcases eq_zero_or_eq_zero_of_mul_eq_zero h'' with h1 | h1
+  · right
+    exact eq_neg_iff_add_eq_zero.mpr h1
+  . left
+    exact eq_of_sub_eq_zero h1
+  -- aesop
+  -- [2/3] 7/2
 
 section
 variable {R : Type*} [CommRing R] [IsDomain R]
@@ -125,5 +155,19 @@ example (P : Prop) : ¬¬P → P := by
   contradiction
 
 example (P Q : Prop) : P → Q ↔ ¬P ∨ Q := by
-  sorry
-
+  -- rw [imp_iff_not_or.symm] -- suggest_tactics
+  -- sorry
+  constructor
+  · intro h
+    by_cases h' : P
+    · right
+      exact h h'
+    . left
+      exact h'
+   -- aesop
+  rintro (h | h)
+  · intro h'
+    exact absurd h' h
+  . intro
+    exact h
+  -- [3/3] 7/0

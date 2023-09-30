@@ -1,5 +1,15 @@
+-- 4 examples in this file, evaluated 1.
+
 import MIL.Common
 import Mathlib.Data.Real.Basic
+
+import Aesop
+
+-- structure neuralConfig where
+--   neuralProver : String
+
+-- @[aesop unsafe 50% neural]
+-- def conf : neuralConfig := { neuralProver := "onnx-leandojo-lean4-tacgen-byt5-small" }
 
 set_option autoImplicit true
 
@@ -163,6 +173,13 @@ variable {α : Type*} {β : Type*} {γ : Type*}
 variable {g : β → γ} {f : α → β}
 
 example (surjg : Surjective g) (surjf : Surjective f) : Surjective fun x ↦ g (f x) := by
-  sorry
+  -- convert surjg.comp surjf -- suggest_tactics
+  -- sorry
+  intro z
+  rcases surjg z with ⟨y, rfl⟩
+  rcases surjf y with ⟨x, rfl⟩
+  -- aesop
+  use x
+  -- [1/1] /
 
 end
