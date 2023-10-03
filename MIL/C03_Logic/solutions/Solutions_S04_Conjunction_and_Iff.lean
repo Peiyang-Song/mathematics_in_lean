@@ -1,6 +1,7 @@
 import MIL.Common
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Nat.Prime
+import LeanInfer
 
 namespace C03S04
 
@@ -90,5 +91,6 @@ example : a < b → b < c → a < c := by
   intro h4
   apply h1
   apply le_trans h2 h4
+  -- suggest_tactics
 
 end

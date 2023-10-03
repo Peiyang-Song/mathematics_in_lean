@@ -1,5 +1,6 @@
 import MIL.Common
 import Mathlib.Data.Real.Basic
+import LeanInfer
 example (a b c : ℝ) : c * b * a = b * (a * c) := by
   rw [mul_comm c b]
   rw [mul_assoc b c a]
@@ -27,6 +28,6 @@ example (a b c d e f : ℝ) (h : b * c = e * f) : a * b * c * d = a * e * f * d 
 example (a b c d : ℝ) (hyp : c = b * a - d) (hyp' : d = a * b) : c = 0 := by
   rw [hyp]
   rw [hyp']
+  -- ring -- suggest_tactics [2]
   rw [mul_comm]
   rw [sub_self]
-

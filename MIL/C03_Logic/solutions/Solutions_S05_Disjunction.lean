@@ -1,5 +1,6 @@
 import MIL.Common
 import Mathlib.Data.Real.Basic
+import LeanInfer
 
 namespace C03S05
 
@@ -20,6 +21,7 @@ theorem neg_le_abs_self (x : ℝ) : -x ≤ |x| := by
   · rw [abs_of_nonneg h]
     linarith
   . rw [abs_of_neg h]
+  -- suggest_tactics
 
 theorem abs_add (x y : ℝ) : |x + y| ≤ |x| + |y| := by
   rcases le_or_gt 0 (x + y) with h | h
@@ -94,8 +96,10 @@ example {x y : ℝ} (h : x ^ 2 = y ^ 2) : x = y ∨ x = -y := by
     ring
   rcases eq_zero_or_eq_zero_of_mul_eq_zero h'' with h1 | h1
   · right
+    -- suggest_tactics
     exact eq_neg_iff_add_eq_zero.mpr h1
   . left
+    -- suggest_tactics
     exact eq_of_sub_eq_zero h1
 
 section

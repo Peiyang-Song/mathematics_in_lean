@@ -1,6 +1,7 @@
 import Mathlib.Data.Nat.GCD.Basic
 import Mathlib.Algebra.BigOperators.Basic
 import MIL.Common
+import LeanInfer
 
 def fac : ℕ → ℕ
   | 0 => 1
@@ -30,6 +31,7 @@ theorem sum_sqr (n : ℕ) : (∑ i in range (n + 1), i ^ 2) = n * (n + 1) * (2 *
   induction' n with n ih
   · simp
   rw [Finset.sum_range_succ, mul_add 6, ← ih, Nat.succ_eq_add_one]
+  -- ring -- suggest_tactics -- [5]
   ring
 
 end

@@ -1,5 +1,6 @@
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import MIL.Common
+import LeanInfer
 
 variable (a b c d e : ℝ)
 open Real
@@ -31,6 +32,7 @@ example (h : a ≤ b) : log (1 + exp a) ≤ log (1 + exp b) := by
 example (h : a ≤ b) : c - exp b ≤ c - exp a := by
   apply sub_le_sub_left
   exact exp_le_exp.mpr h
+  -- suggest_tactics
 
 -- alternatively:
 example (h : a ≤ b) : c - exp b ≤ c - exp a := by
@@ -58,4 +60,3 @@ example : |a * b| ≤ (a ^ 2 + b ^ 2) / 2 := by
     apply fact1
   rw [le_div_iff h]
   apply fact2
-

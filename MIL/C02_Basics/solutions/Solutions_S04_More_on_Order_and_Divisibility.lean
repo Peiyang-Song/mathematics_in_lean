@@ -1,5 +1,6 @@
 import MIL.Common
 import Mathlib.Data.Real.Basic
+import LeanInfer
 
 namespace C02S04
 
@@ -14,12 +15,14 @@ example : max a b = max b a := by
   apply le_antisymm
   repeat'
     apply max_le
+    -- all_goals simp [le_max_right] -- suggest_tactics -- [3]
     apply le_max_right
     apply le_max_left
 
 example : min (min a b) c = min a (min b c) := by
   apply le_antisymm
   · apply le_min
+    -- all_goals simp -- suggest_tactics -- [2]
     · apply le_trans
       apply min_le_left
       apply min_le_left
@@ -114,4 +117,3 @@ example : Nat.gcd m n = Nat.gcd n m := by
     apply Nat.gcd_dvd_left
 
 end
-

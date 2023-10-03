@@ -1,6 +1,7 @@
 import MIL.Common
 import Mathlib.Topology.Instances.Real
 import Mathlib.Analysis.NormedSpace.BanachSteinhaus
+import LeanInfer
 
 open Set Filter
 open Topology Filter
@@ -96,6 +97,7 @@ example {u : ℕ → X} (hu : Tendsto u atTop (𝓝 a)) {s : Set X} (hs : ∀ n,
   rcases hu ε ε_pos with ⟨N, hN⟩
   refine' ⟨u N, hs _, _⟩
   rw [dist_comm]
+  -- exact hN _ le_rfl -- suggest_tactics
   exact hN N le_rfl
 
 example {x : X} {s : Set X} : s ∈ 𝓝 x ↔ ∃ ε > 0, Metric.ball x ε ⊆ s :=
@@ -368,5 +370,3 @@ example [CompleteSpace X] (f : ℕ → Set X) (ho : ∀ n, IsOpen (f n)) (hd : �
   calc
     dist y x ≤ r 0 := yball 0
     _ ≤ ε := min_le_left _ _
-
-

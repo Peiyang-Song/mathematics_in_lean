@@ -2,6 +2,7 @@ import MIL.Common
 import Mathlib.Data.Set.Lattice
 import Mathlib.Data.Set.Function
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import LeanInfer
 
 section
 
@@ -25,6 +26,7 @@ example : f '' s ⊆ v ↔ s ⊆ f ⁻¹' v := by
 
 example (h : Injective f) : f ⁻¹' (f '' s) ⊆ s := by
   rintro x ⟨y, ys, fxeq⟩
+  -- exact h fxeq.symm ▸ ys -- suggest_tactics -- [1]
   rw [← h fxeq]
   exact ys
 
@@ -64,6 +66,7 @@ example (h : Injective f) : f '' s ∩ f '' t ⊆ f '' (s ∩ t) := by
   constructor
   . use x₁s
     rw [← h fx₂eq]
+    -- exact x₂t -- suggest_tactics -- [5]
     exact x₂t
   . rfl
 
@@ -99,6 +102,7 @@ example : s ∩ f ⁻¹' u ⊆ f ⁻¹' (f '' s ∩ u) := by
 example : s ∪ f ⁻¹' u ⊆ f ⁻¹' (f '' s ∪ u) := by
   rintro x (xs | fxu)
   · left
+    -- exact mem_image_of_mem _ xs -- suggest_tactics -- [2]
     exact ⟨x, xs, rfl⟩
   right; exact fxu
 
@@ -181,6 +185,7 @@ example : (range fun x ↦ x ^ 2) = { y : ℝ | y ≥ 0 } := by
   constructor
   · rintro ⟨x, rfl⟩
     dsimp at *
+    -- exact sq_nonneg _ -- suggest_tactics
     apply pow_two_nonneg
   intro ynonneg
   use sqrt y
@@ -225,6 +230,7 @@ example : Surjective f ↔ RightInverse (inverse f) f := by
     apply h
   intro h y
   use inverse f y
+  -- apply h -- suggest_tactics
   apply h
 
 example : Surjective f ↔ RightInverse (inverse f) f :=

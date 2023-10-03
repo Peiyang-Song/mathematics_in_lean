@@ -1,5 +1,6 @@
 import MIL.Common
 import Mathlib.Data.Real.Basic
+import LeanInfer
 
 namespace C03S01
 
@@ -40,6 +41,7 @@ example (hfa : FnUb f a) (hgb : FnUb g b) (nng : FnLb g 0) (nna : 0 ≤ a) :
   apply hfa
   apply hgb
   apply nng
+  -- apply nna -- suggest_tactics -- [5]
   apply nna
 
 end
@@ -59,6 +61,7 @@ example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f (g x) := by
   intro a b aleb
   apply mf
   apply mg
+  -- exact aleb -- suggest_tactics -- [3]
   apply aleb
 
 example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f (g x) :=
@@ -135,6 +138,7 @@ example (injg : Injective g) (injf : Injective f) : Injective fun x ↦ g (f x) 
   intro x₁ x₂ h
   apply injf
   apply injg
+  -- simpa using h -- suggest_tactics -- [3]
   apply h
 
 end

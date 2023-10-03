@@ -1,6 +1,7 @@
 import MIL.Common
 import Mathlib.Topology.Instances.Real
 import Mathlib.Analysis.NormedSpace.BanachSteinhaus
+import LeanInfer
 
 open Set Filter Topology
 
@@ -59,6 +60,7 @@ example {α : Type*} (n : α → Filter α) (H₀ : ∀ a, pure a ≤ n a)
   refine' ⟨{ y | s ∈ n y }, H a (fun x ↦ x ∈ s) s_in, _, by tauto⟩
   rintro y (hy : s ∈ n y)
   exact H₀ y hy
+  -- suggest_tactics
 
 end
 

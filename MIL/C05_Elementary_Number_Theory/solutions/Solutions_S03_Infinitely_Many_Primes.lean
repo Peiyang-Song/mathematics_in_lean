@@ -1,6 +1,7 @@
 import Mathlib.Data.Nat.Prime
 import Mathlib.Algebra.BigOperators.Order
 import MIL.Common
+import LeanInfer
 
 open BigOperators
 
@@ -75,6 +76,7 @@ example : (r \ s) \ t = r \ (s ∪ t) := by
 example : (r \ s) \ t = r \ (s ∪ t) := by
   ext x
   simp
+  -- tauto --suggest_tactics -- [2]
   tauto
 
 end
@@ -83,6 +85,7 @@ theorem _root_.Nat.Prime.eq_of_dvd_of_prime {p q : ℕ}
       (prime_p : Nat.Prime p) (prime_q : Nat.Prime q) (h : p ∣ q) :
     p = q := by
   cases prime_q.eq_one_or_self_of_dvd _ h
+  -- · try simp_all -- suggest_tactics
   · linarith [prime_p.two_le]
   assumption
 
@@ -233,4 +236,3 @@ theorem primes_mod_4_eq_3_infinite : ∀ n, ∃ p > n, Nat.Prime p ∧ p % 4 = 3
   have : p = 3 := by
     apply pp.eq_of_dvd_of_prime Nat.prime_three this
   contradiction
-

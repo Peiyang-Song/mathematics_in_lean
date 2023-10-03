@@ -1,5 +1,6 @@
 import MIL.Common
 import Mathlib.Topology.Instances.Real
+import LeanInfer
 
 open Set Filter Topology
 
@@ -66,6 +67,7 @@ example (f : ℕ → ℝ × ℝ) (x₀ y₀ : ℝ) :
   rw [nhds_prod_eq]
   unfold Tendsto SProd.sprod Filter.instSProd Filter.prod
   erw [le_inf_iff, ← map_le_iff_le_comap, map_map, ← map_le_iff_le_comap, map_map]
+  -- suggest_tactics
 
 example (u : ℕ → ℝ) (M : Set ℝ) (x : ℝ) (hux : Tendsto u atTop (𝓝 x))
     (huM : ∀ᶠ n in atTop, u n ∈ M) : x ∈ closure M :=

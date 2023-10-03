@@ -1,5 +1,6 @@
 import MIL.Common
 import Mathlib.Data.Real.Basic
+import LeanInfer
 
 set_option autoImplicit true
 
@@ -31,6 +32,7 @@ example (lbf : FnHasLb f) (lbg : FnHasLb g) : FnHasLb fun x ↦ f x + g x := by
   use a + b
   intro x
   exact add_le_add (lbfa x) (lbgb x)
+  -- suggest_tactics
 
 example {c : ℝ} (ubf : FnHasUb f) (h : c ≥ 0) : FnHasUb fun x ↦ c * f x := by
   rcases ubf with ⟨a, lbfa⟩
@@ -77,6 +79,8 @@ variable {α : Type*} {β : Type*} {γ : Type*}
 variable {g : β → γ} {f : α → β}
 
 example (surjg : Surjective g) (surjf : Surjective f) : Surjective fun x ↦ g (f x) := by
+  -- suggest_tactics
+  -- convert surjg.comp surjf
   intro z
   rcases surjg z with ⟨y, rfl⟩
   rcases surjf y with ⟨x, rfl⟩

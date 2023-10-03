@@ -1,6 +1,7 @@
 import Mathlib.Algebra.Ring.Defs
 import Mathlib.Data.Real.Basic
 import MIL.Common
+import LeanInfer
 
 namespace MyRing
 variable {R : Type*} [Ring R]
@@ -24,6 +25,7 @@ theorem neg_eq_of_add_eq_zero {a b : R} (h : a + b = 0) : -a = b := by
 theorem eq_neg_of_add_eq_zero {a b : R} (h : a + b = 0) : a = -b := by
   symm
   apply neg_eq_of_add_eq_zero
+  -- rwa [add_comm] -- suggest_tactics -- [2]
   rw [add_comm, h]
 
 theorem neg_zero : (-0 : R) = 0 := by
@@ -70,4 +72,3 @@ theorem mul_inv_rev (a b : G) : (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
 end MyGroup
 
 end
-

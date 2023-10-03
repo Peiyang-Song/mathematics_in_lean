@@ -2,6 +2,7 @@ import Mathlib.Data.Set.Lattice
 import Mathlib.Data.Nat.Prime
 import Mathlib.Data.Nat.Parity
 import MIL.Common
+import LeanInfer
 
 section
 variable {α : Type*}
@@ -12,6 +13,7 @@ example : s ∩ t ∪ s ∩ u ⊆ s ∩ (t ∪ u) := by
   rintro x (⟨xs, xt⟩ | ⟨xs, xu⟩)
   · use xs; left; exact xt
   . use xs; right; exact xu
+  -- suggest_tactics
 
 example : s \ (t ∪ u) ⊆ (s \ t) \ u := by
   rintro x ⟨xs, xntu⟩
@@ -86,6 +88,7 @@ example : { n | Nat.Prime n } ∩ { n | n > 2 } ⊆ { n | ¬Even n } := by
     intro
     linarith
   rw [Nat.even_iff, h]
+  -- exact fun h1 => by decide -- suggest_tactics
   norm_num
 
 end
@@ -138,6 +141,7 @@ example : (s ∪ ⋂ i, A i) = ⋂ i, A i ∪ s := by
   cases h i
   · assumption
   contradiction
+  -- suggest_tactics
 
 def primes : Set ℕ :=
   { x | Nat.Prime x }
@@ -147,7 +151,7 @@ example : (⋃ p ∈ primes, { x | x ≤ p }) = univ := by
   intro x
   simp
   rcases Nat.exists_infinite_primes x with ⟨p, primep, pge⟩
+  -- suggest_tactics []
   use p, pge
 
 end
-

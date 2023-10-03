@@ -1,5 +1,6 @@
 import MIL.Common
 import Mathlib.Data.Real.Basic
+import LeanInfer
 
 namespace C03S03
 
@@ -34,6 +35,7 @@ example : ¬FnHasUb fun x ↦ x := by
 example (h : Monotone f) (h' : f a < f b) : a < b := by
   apply lt_of_not_ge
   intro h''
+  -- exact (h h'').not_lt h' -- suggest_tactics -- [2]
   apply absurd h'
   apply not_lt_of_ge (h h'')
 
@@ -56,6 +58,7 @@ example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b}, f a ≤ f b → a �
 example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
   apply le_of_not_gt
   intro h'
+  -- exact lt_irrefl _ (h _ h') -- suggest_tactics -- [2]
   linarith [h _ h']
 
 end
@@ -105,7 +108,7 @@ example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
 example (h : ¬Monotone f) : ∃ x y, x ≤ y ∧ f y < f x := by
   rw [Monotone] at h
   push_neg  at h
+  -- simpa using h -- suggest_tactics -- [2]
   exact h
 
 end
-
