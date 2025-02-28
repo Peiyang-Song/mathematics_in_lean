@@ -32,11 +32,34 @@ example (h : ∀ a, ∃ x, f x > a) : ¬FnHasUb f := by
   have : f x ≤ a := fnuba x
   linarith
 
-example (h : ∀ a, ∃ x, f x < a) : ¬FnHasLb f :=
-  sorry
+example (h : ∀ a, ∃ x, f x < a) : ¬FnHasLb f := by
+  rintro ⟨a, ha⟩
+  rcases h a with ⟨x, hx⟩
+  have := ha x
+  -- search_proof
+  -- linarith
 
-example : ¬FnHasUb fun x ↦ x :=
-  sorry
+  -- suggest_tactics
+  -- linarith
+
+  linarith
+
+  -- aesop
+
+example : ¬FnHasUb fun x ↦ x := by
+  rintro ⟨a, ha⟩
+  have : a + 1 ≤ a := ha (a + 1)
+
+  -- search_proof
+  -- simp_all only [add_le_iff_nonpos_right]
+  -- linarith
+
+  -- suggest_tactics
+  -- linarith
+
+  linarith
+
+  -- aesop
 
 #check (not_le_of_gt : a > b → ¬a ≤ b)
 #check (not_lt_of_ge : a ≥ b → ¬a < b)
@@ -44,20 +67,78 @@ example : ¬FnHasUb fun x ↦ x :=
 #check (le_of_not_gt : ¬a > b → a ≤ b)
 
 example (h : Monotone f) (h' : f a < f b) : a < b := by
-  sorry
+  -- search_proof
+  -- contrapose! h'
+  -- exact h h'
+
+  -- suggest_tactics
+  -- exact h'.trans_lt h
+
+  apply lt_of_not_ge
+  intro h''
+  apply absurd h'
+  apply not_lt_of_ge (h h'')
+
+  -- aesop
 
 example (h : a ≤ b) (h' : f b < f a) : ¬Monotone f := by
-  sorry
+  -- search_proof
+  -- apply Aesop.BuiltinRules.not_intro
+  -- intro a_1
+  -- apply h'.not_le
+  -- exact a_1 h
+
+  intro h''
+
+  -- suggest_tactics
+  -- exact h'.not_le h'.le
+
+  apply absurd h'
+  apply not_lt_of_ge
+
+  -- aesop
+
+  apply h'' h
 
 example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b}, f a ≤ f b → a ≤ b := by
+  -- suggest_tactics
+
   intro h
   let f := fun x : ℝ ↦ (0 : ℝ)
-  have monof : Monotone f := by sorry
+  have monof : Monotone f := by
+    intro a b leab
+    rfl
   have h' : f 1 ≤ f 0 := le_refl _
-  sorry
+  have : (1 : ℝ) ≤ 0 := h monof h'
+
+  -- search_proof
+  -- simp_all only [le_refl, f]
+  -- linarith
+
+  -- suggest_tactics
+  -- linarith
+
+  linarith
+
+  -- aesop
 
 example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
-  sorry
+  -- search_proof
+  -- simp_all only [gt_iff_lt]
+  -- contrapose! h
+  -- apply Exists.intro
+  -- · apply And.intro
+  --   on_goal 2 => {rfl
+  --   }
+  --   · simp_all only
+
+  apply le_of_not_gt
+  intro h'
+  linarith [h _ h']
+
+  -- suggest_tactics
+
+  -- aesop
 
 end
 
@@ -65,16 +146,47 @@ section
 variable {α : Type*} (P : α → Prop) (Q : Prop)
 
 example (h : ¬∃ x, P x) : ∀ x, ¬P x := by
-  sorry
+  -- search_proof
+  -- intro x
+  -- simp_all only [not_exists, not_false_eq_true]
+
+  -- suggest_tactics
+  -- simpa using h
+
+  -- aesop
+
+  intro x Px
+  apply h
+  use x
 
 example (h : ∀ x, ¬P x) : ¬∃ x, P x := by
-  sorry
+  -- search_proof
+  -- simp_all only [exists_false, not_false_eq_true]
+
+  -- suggest_tactics
+  -- simp [h]
+
+  -- aesop
+
+  rintro ⟨x, Px⟩
+  exact h x Px
 
 example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
   sorry
 
 example (h : ∃ x, ¬P x) : ¬∀ x, P x := by
-  sorry
+  -- search_proof
+  -- simp_all only [not_forall]
+
+  -- suggest_tactics
+  -- simpa using h
+
+  -- aesop
+
+  intro h'
+  rcases h with ⟨x, nPx⟩
+  apply nPx
+  apply h'
 
 example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
   by_contra h'
@@ -85,10 +197,28 @@ example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
   exact h' ⟨x, h''⟩
 
 example (h : ¬¬Q) : Q := by
-  sorry
+  -- search_proof
+  -- simp_all only [not_not]
+
+  -- suggest_tactics
+  -- exact not_not.1 h
+
+  -- aesop
+
+  by_contra h'
+  exact h h'
 
 example (h : Q) : ¬¬Q := by
-  sorry
+  -- search_proof
+  -- simp_all only [not_true_eq_false, not_false_eq_true]
+
+  -- suggest_tactics
+  -- simp [h]
+
+  -- aesop
+
+  intro h'
+  exact h' h
 
 end
 
@@ -96,7 +226,25 @@ section
 variable (f : ℝ → ℝ)
 
 example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
-  sorry
+  intro a
+  by_contra h'
+  apply h
+  use a
+
+  -- search_proof
+  -- simp_all only [gt_iff_lt, not_exists, not_lt]
+  -- exact h'
+
+  -- suggest_tactics
+  -- simpa using h'
+
+  -- aesop
+
+  intro x
+  apply le_of_not_gt
+  intro h''
+  apply h'
+  use x
 
 example (h : ¬∀ a, ∃ x, f x > a) : FnHasUb f := by
   push_neg at h
@@ -108,7 +256,19 @@ example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
   exact h
 
 example (h : ¬Monotone f) : ∃ x y, x ≤ y ∧ f y < f x := by
-  sorry
+  -- search_proof
+  -- contrapose! h
+  -- exact h
+
+  rw [Monotone] at h
+
+  -- suggest_tactics
+  -- simpa using h
+
+  -- aesop
+
+  push_neg  at h
+  exact h
 
 example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
   contrapose! h
@@ -136,4 +296,3 @@ example (h : 0 < 0) : a > 37 := by
   contradiction
 
 end
-
