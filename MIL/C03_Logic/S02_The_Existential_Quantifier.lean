@@ -52,10 +52,40 @@ example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
   apply fnUb_add ubfa ubgb
 
 example (lbf : FnHasLb f) (lbg : FnHasLb g) : FnHasLb fun x ↦ f x + g x := by
-  sorry
+  rcases lbf with ⟨a, lbfa⟩
+  rcases lbg with ⟨b, lbgb⟩
+  use a + b
+  intro x
+
+  -- search_proof
+  -- simp_all only
+  -- gcongr
+  -- · exact lbfa x
+  -- · exact lbgb x
+
+  -- suggest_tactics
+  -- exact le_of_lt lbfa.1
+
+  exact add_le_add (lbfa x) (lbgb x)
+
+  -- aesop
 
 example {c : ℝ} (ubf : FnHasUb f) (h : c ≥ 0) : FnHasUb fun x ↦ c * f x := by
-  sorry
+  rcases ubf with ⟨a, ubfa⟩
+  use c * a
+  intro x
+
+  -- search_proof
+  -- simp_all only [ge_iff_le]
+  -- gcongr
+  -- apply ubfa
+
+  -- suggest_tactics
+  -- exact mul_le_mul_of_nonneg_left ubfa.le h
+
+  exact mul_le_mul_of_nonneg_left (ubfa x) h
+
+  -- aesop
 
 example : FnHasUb f → FnHasUb g → FnHasUb fun x ↦ f x + g x := by
   rintro ⟨a, ubfa⟩ ⟨b, ubgb⟩
@@ -129,7 +159,17 @@ example (divab : a ∣ b) (divbc : b ∣ c) : a ∣ c := by
   use d * e; ring
 
 example (divab : a ∣ b) (divac : a ∣ c) : a ∣ b + c := by
-  sorry
+  -- search_proof
+  -- exact dvd_add divab divac
+
+  -- suggest_tactics
+  -- exact dvd_add divab divac
+
+  rcases divab with ⟨d, rfl⟩
+  rcases divac with ⟨e, rfl⟩
+  use d + e; ring
+
+  -- aesop
 
 end
 
@@ -143,7 +183,19 @@ example {c : ℝ} : Surjective fun x ↦ x + c := by
   dsimp; ring
 
 example {c : ℝ} (h : c ≠ 0) : Surjective fun x ↦ c * x := by
-  sorry
+  intro x
+  use x / c
+
+  -- search_proof
+  -- simp_all only [ne_eq]
+  -- field_simp [h]
+
+  -- suggest_tactics
+  -- field_simp
+
+  dsimp; rw [mul_div_cancel₀ _ h]
+
+  -- aesop
 
 example (x y : ℝ) (h : x - y ≠ 0) : (x ^ 2 - y ^ 2) / (x - y) = x + y := by
   field_simp [h]
@@ -163,6 +215,18 @@ variable {α : Type*} {β : Type*} {γ : Type*}
 variable {g : β → γ} {f : α → β}
 
 example (surjg : Surjective g) (surjf : Surjective f) : Surjective fun x ↦ g (f x) := by
-  sorry
+  -- search_proof
+  -- exact surjg.comp surjf
+
+  -- suggest_tactics
+  -- exact surjg.comp surjf
+
+  intro z
+  rcases surjg z with ⟨y, rfl⟩
+  rcases surjf y with ⟨x, rfl⟩
+
+  -- aesop
+
+  use x
 
 end
