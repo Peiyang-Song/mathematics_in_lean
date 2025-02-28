@@ -40,12 +40,26 @@ theorem my_lemma3 :
 
 theorem my_lemma4 :
     ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
+  -- search_proof
+  -- intro x y ε a a_1 a_2 a_3
+  -- rw [abs] at a_2 a_3 ⊢
+  -- simp_all only [sup_lt_iff]
+  -- obtain ⟨left, right⟩ := a_2
+  -- obtain ⟨left_1, right_1⟩ := a_3
+  -- apply And.intro
+  -- · nlinarith
+  -- · nlinarith
+
   intro x y ε epos ele1 xlt ylt
+  -- suggest_tactics
+  -- simpa using xlt.abs ylt
   calc
-    |x * y| = |x| * |y| := sorry
-    _ ≤ |x| * ε := sorry
-    _ < 1 * ε := sorry
-    _ = ε := sorry
+    |x * y| = |x| * |y| := by apply abs_mul
+    _ ≤ |x| * ε := by apply mul_le_mul; linarith; linarith; apply abs_nonneg; apply abs_nonneg;
+    _ < 1 * ε := by rw [mul_lt_mul_right epos]; linarith
+    _ = ε := by apply one_mul
+
+  -- aesop
 
 def FnUb (f : ℝ → ℝ) (a : ℝ) : Prop :=
   ∀ x, f x ≤ a
@@ -66,12 +80,50 @@ example (hfa : FnUb f a) (hgb : FnUb g b) : FnUb (fun x ↦ f x + g x) (a + b) :
 example (hfa : FnLb f a) (hgb : FnLb g b) : FnLb (fun x ↦ f x + g x) (a + b) :=
   sorry
 
-example (nnf : FnLb f 0) (nng : FnLb g 0) : FnLb (fun x ↦ f x * g x) 0 :=
-  sorry
+example (nnf : FnLb f 0) (nng : FnLb g 0) : FnLb (fun x ↦ f x * g x) 0 := by
+
+  intro x
+
+  -- search_proof
+  -- simp_all only
+  -- apply mul_nonneg
+  -- · apply nnf
+  -- · apply nng
+
+  apply mul_nonneg
+
+  -- suggest_tactics
+  -- exacts [nnf.le, nng.le]
+
+  apply nnf
+
+  -- aesop
+
+  apply nng
 
 example (hfa : FnUb f a) (hgb : FnUb g b) (nng : FnLb g 0) (nna : 0 ≤ a) :
-    FnUb (fun x ↦ f x * g x) (a * b) :=
-  sorry
+    FnUb (fun x ↦ f x * g x) (a * b) := by
+
+  intro x
+
+  -- search_proof
+  -- simp_all only
+  -- gcongr
+  -- · exact nng x
+  -- · exact hfa x
+  -- · exact hgb x
+
+  -- suggest_tactics
+  -- simpa [mul_comm] using hfa.mul_left x
+
+  apply mul_le_mul
+  apply hfa
+  apply hgb
+  apply nng
+
+  -- aesop
+
+  apply nna
 
 end
 
@@ -103,11 +155,37 @@ example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f x + g x := by
 example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f x + g x :=
   fun a b aleb ↦ add_le_add (mf aleb) (mg aleb)
 
-example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x :=
-  sorry
+example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x := by
+  -- search_proof
+  -- intro x hx
+  -- intro a
+  -- simp_all only
+  -- exact mul_le_mul_of_nonneg_left (mf a) nnc
 
-example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f (g x) :=
-  sorry
+  -- suggest_tactics
+  -- exact monotone_id.mul_left c
+
+  intro a b aleb
+  apply mul_le_mul_of_nonneg_left _ nnc
+
+  -- aesop
+
+  apply mf aleb
+
+example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f (g x) := by
+  -- search_proof
+  -- exact mf.comp mg
+
+  -- suggest_tactics
+  -- exact mf.monotone
+
+  intro a b aleb
+
+  -- aesop
+
+  apply mf
+  apply mg
+  apply aleb
 
 def FnEven (f : ℝ → ℝ) : Prop :=
   ∀ x, f x = f (-x)
@@ -123,13 +201,39 @@ example (ef : FnEven f) (eg : FnEven g) : FnEven fun x ↦ f x + g x := by
 
 
 example (of : FnOdd f) (og : FnOdd g) : FnEven fun x ↦ f x * g x := by
-  sorry
+
+  intro x
+  calc
+    (fun x ↦ f x * g x) x = f x * g x := rfl
+    _ = f (-x) * g (-x) := by rw [of, og, neg_mul_neg]
+
+  -- suggest_tactics
+
+  -- search_proof
+
+  -- aesop
 
 example (ef : FnEven f) (og : FnOdd g) : FnOdd fun x ↦ f x * g x := by
-  sorry
+  intro x
+  dsimp
+  rw [ef, og, neg_mul_eq_mul_neg]
+
+  -- suggest_tactics
+
+  -- search_proof
+
+  -- aesop
 
 example (ef : FnEven f) (og : FnOdd g) : FnEven fun x ↦ f (g x) := by
-  sorry
+  intro xlt
+  dsimp
+  rw [og, ← ef]
+
+  -- search_proof
+
+  -- suggest_tactics
+
+  -- aesop
 
 end
 
@@ -144,7 +248,20 @@ example : s ⊆ s := by
 theorem Subset.refl : s ⊆ s := fun x xs ↦ xs
 
 theorem Subset.trans : r ⊆ s → s ⊆ t → r ⊆ t := by
-  sorry
+  -- search_proof
+  -- intro a a_1
+  -- exact a.trans a_1
+
+  -- suggest_tactics
+  -- tauto
+
+  intro rsubs ssubt x xr
+
+  -- aesop
+
+  apply ssubt
+  apply rsubs
+  apply xr
 
 end
 
@@ -169,12 +286,36 @@ example (c : ℝ) : Injective fun x ↦ x + c := by
   exact (add_left_inj c).mp h'
 
 example {c : ℝ} (h : c ≠ 0) : Injective fun x ↦ c * x := by
-  sorry
+  -- search_proof
+  -- simp_all only [ne_eq]
+  -- intro x y hxy
+  -- simp_all only [mul_eq_mul_left_iff, or_false]
+
+  -- suggest_tactics
+  -- exact injective_mul_left h
+
+  intro x₁ x₂ h'
+
+  aesop
+
+  -- apply (mul_right_inj' h).mp h'
 
 variable {α : Type*} {β : Type*} {γ : Type*}
 variable {g : β → γ} {f : α → β}
 
 example (injg : Injective g) (injf : Injective f) : Injective fun x ↦ g (f x) := by
-  sorry
+  -- search_proof
+  -- tauto
+
+  -- suggest_tactics
+  -- exact injective_comp_iff.mpr injf
+
+  intro x₁ x₂ h
+
+  -- aesop
+
+  apply injf
+  apply injg
+  apply h
 
 end
