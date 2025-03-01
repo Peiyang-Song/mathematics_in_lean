@@ -1,3 +1,7 @@
+# Evaluate Lean Copilot on Mathematics in Lean
+
+This branch contains all code for our evaluation of Lean Copilot on Mathematics in Lean. Please refer to our [paper](https://arxiv.org/abs/2404.12534) for detailed discussions. Below is the original README for Mathematics in Lean.
+
 # Mathematics in Lean
 
 This tutorial depends on Lean 4, VS Code, and Mathlib.
@@ -36,7 +40,7 @@ Do the following:
    You can call the copy `my_files` or whatever you want and use it to create
    your own Lean files as well.
 
-At that point, you can open the textbook in a web browser 
+At that point, you can open the textbook in a web browser
 at [https://leanprover-community.github.io/mathematics_in_lean/](https://leanprover-community.github.io/mathematics_in_lean/)
 and start reading and doing the exercises in VS Code.
 
