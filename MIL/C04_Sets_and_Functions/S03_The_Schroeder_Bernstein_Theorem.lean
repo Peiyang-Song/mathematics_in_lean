@@ -23,15 +23,25 @@ def sbFun (x : α) : β :=
   if x ∈ sbSet f g then f x else invFun g x
 
 theorem sb_right_inv {x : α} (hx : x ∉ sbSet f g) : g (invFun g x) = x := by
+
   have : x ∈ g '' univ := by
     contrapose! hx
     rw [sbSet, mem_iUnion]
     use 0
     rw [sbAux, mem_diff]
-    sorry
+    exact ⟨mem_univ _, hx⟩
+
   have : ∃ y, g y = x := by
-    sorry
-  sorry
+    simp at this
+    assumption
+
+  exact invFun_eq this
+
+  -- search_proof
+
+  -- suggest_tactics
+
+  -- aesop
 
 theorem sb_injective (hf : Injective f) : Injective (sbFun f g) := by
   set A := sbSet f g with A_def
