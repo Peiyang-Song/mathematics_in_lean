@@ -69,7 +69,16 @@ def Submonoid.Setoid [CommMonoid M] (N : Submonoid M) : Setoid M  where
     refl := fun x ↦ ⟨1, N.one_mem, 1, N.one_mem, rfl⟩
     symm := fun ⟨w, hw, z, hz, h⟩ ↦ ⟨z, hz, w, hw, h.symm⟩
     trans := by
-      sorry
+
+      rintro a b c ⟨w, hw, z, hz, h⟩ ⟨w', hw', z', hz', h'⟩
+      refine ⟨w*w', N.mul_mem hw hw', z*z', N.mul_mem hz hz', ?_⟩
+      rw [← mul_assoc, h, mul_comm b, mul_assoc, h', ← mul_assoc, mul_comm z, mul_assoc]
+
+      -- search_proof
+
+      -- aesop
+
+      -- suggest_tactics
   }
 
 instance [CommMonoid M] : HasQuotient M (Submonoid M) where
@@ -79,12 +88,71 @@ def QuotientMonoid.mk [CommMonoid M] (N : Submonoid M) : M → M ⧸ N := Quotie
 
 instance [CommMonoid M] (N : Submonoid M) : Monoid (M ⧸ N) where
   mul := Quotient.map₂' (· * ·) (by
-      sorry
+    rintro a₁ b₁ ⟨w, hw, z, hz, ha⟩ a₂ b₂ ⟨w', hw', z', hz', hb⟩
+    refine ⟨w*w', N.mul_mem hw hw', z*z', N.mul_mem hz hz', ?_⟩
+
+    -- search_proof
+    -- simp_all only
+    -- symm
+    -- symm
+    -- simp only [← mul_assoc, ha, hb, mul_comm z']
+    -- simp only [mul_assoc, ha, hb, mul_comm z]
+    -- simp only [mul_assoc, ha, hb, mul_comm a₁]
+    -- simp only [← mul_assoc]
+    -- simp only [mul_assoc, mul_left_comm]
+    -- simp only [← mul_assoc]
+    -- rw [mul_comm]
+    -- rw [mul_assoc, ← mul_assoc, ha, hb, mul_assoc]
+    -- rw [← mul_assoc, ← mul_assoc, ← ha]
+    -- simp_all only
+    -- simp only [mul_assoc, mul_left_comm]
+    -- rw [← mul_assoc, ← mul_assoc, ← mul_assoc, ← ha]
+    -- simp_all only
+    -- rw [mul_assoc, mul_comm b₁, mul_comm b₂]
+    -- rw [mul_assoc, mul_comm z', ← hb, mul_comm z']
+    -- simp_all only
+    -- rw [← mul_assoc, ← mul_assoc, ← mul_assoc]
+    -- simp only [mul_assoc, mul_left_comm]
+
+    rw [mul_comm w, ← mul_assoc, mul_assoc a₁, hb, mul_comm, ← mul_assoc, mul_comm w, ha,
+        mul_assoc, mul_comm z, mul_assoc b₂, mul_comm z', mul_assoc]
+
+    -- aesop
+
+    -- suggest_tactics
+
         )
   mul_assoc := by
-      sorry
+    rintro ⟨a⟩ ⟨b⟩ ⟨c⟩
+    apply Quotient.sound
+    dsimp only
+    rw [mul_assoc]
+    apply @Setoid.refl M N.Setoid
+
+    -- search_proof
+
+    -- aesop
+
+    -- suggest_tactics
+
   one := QuotientMonoid.mk N 1
   one_mul := by
-      sorry
+    rintro ⟨a⟩ ; apply Quotient.sound ; dsimp only ; rw [one_mul] ; apply @Setoid.refl M N.Setoid
   mul_one := by
-      sorry
+    -- search_proof
+    -- intro a
+    -- simp_all only
+    -- symm
+    -- symm
+    -- refine Quotient.inductionOn a ?_
+    -- intro a_1
+    -- rw [← Quotient.mk''_eq_mk, Quotient.mk''_eq_mk]
+    -- symm
+    -- congr
+    -- simp_all only [mul_one]
+
+    rintro ⟨a⟩ ; apply Quotient.sound ; dsimp only ; rw [mul_one] ; apply @Setoid.refl M N.Setoid
+
+    -- suggest_tactics
+
+    -- aesop
