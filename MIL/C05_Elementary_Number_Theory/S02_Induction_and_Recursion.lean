@@ -46,9 +46,26 @@ theorem dvd_fac {i n : ℕ} (ipos : 0 < i) (ile : i ≤ n) : i ∣ fac n := by
   apply dvd_mul_right
 
 theorem pow_two_le_fac (n : ℕ) : 2 ^ (n - 1) ≤ fac n := by
+
   rcases n with _ | n
   · simp [fac]
-  sorry
+  induction' n with n ih
+  · simp [fac]
+  simp at *
+  rw [pow_succ', fac]
+  apply Nat.mul_le_mul _ ih
+
+  -- search_proof
+  -- simp_all only [le_add_iff_nonneg_left, zero_le]
+
+  -- aesop
+
+  -- suggest_tactics
+  -- omega
+
+  repeat' apply Nat.succ_le_succ
+  apply zero_le
+
 section
 
 variable {α : Type*} (s : Finset ℕ) (f : ℕ → ℕ) (n : ℕ)
@@ -99,7 +116,24 @@ theorem sum_id (n : ℕ) : ∑ i in range (n + 1), i = n * (n + 1) / 2 := by
   ring
 
 theorem sum_sqr (n : ℕ) : ∑ i in range (n + 1), i ^ 2 = n * (n + 1) * (2 * n + 1) / 6 := by
-  sorry
+
+  symm;
+  apply Nat.div_eq_of_eq_mul_right (by norm_num : 0 < 6)
+  induction' n with n ih
+  · simp
+  rw [Finset.sum_range_succ, mul_add 6, ← ih]
+
+  -- search_proof
+  -- ring
+
+  -- suggest_tactics
+  -- ring
+
+  ring
+
+  -- aesop
+
+
 end
 
 inductive MyNat where
@@ -134,13 +168,92 @@ theorem add_comm (m n : MyNat) : add m n = add n m := by
   rw [add, succ_add, ih]
 
 theorem add_assoc (m n k : MyNat) : add (add m n) k = add m (add n k) := by
-  sorry
+  -- search_proof
+  -- rw [add_comm]
+  -- rw [add_comm, add_assoc, add_comm]
+
+  induction' k with k ih
+  · -- suggest_tactics
+    -- rfl
+    rfl
+
+  -- suggest_tactics
+  -- simp [add, ih]
+
+  rw [add, ih]
+
+  -- aesop
+
+  rfl
+
+
 theorem mul_add (m n k : MyNat) : mul m (add n k) = add (mul m n) (mul m k) := by
-  sorry
+  -- search_proof
+  -- symm
+  -- simp [add, mul_add]
+
+  induction' k with k ih
+  · rfl
+  rw [add, mul, mul, ih, add_assoc]
+
+  -- suggest_tactics
+
+  -- aesop
+
+
 theorem zero_mul (n : MyNat) : mul zero n = zero := by
-  sorry
+  -- search_proof
+  -- cases n
+  -- · rfl
+  -- · exact zero_mul _
+
+  induction' n with n ih
+
+  · -- suggest_tactics
+    -- rfl
+
+    -- aesop
+
+    rfl
+
+  -- suggest_tactics
+  -- exact ih
+
+  -- aesop
+
+  rw [mul, ih]
+  rfl
+
+
 theorem succ_mul (m n : MyNat) : mul (succ m) n = add (mul m n) n := by
-  sorry
+
+  induction' n with n ih
+  · rfl
+  rw [mul, mul, ih, add_assoc, add_assoc, add_comm n, succ_add]
+
+  -- search_proof
+  -- rfl
+
+  -- suggest_tactics
+  -- simp [add, ih]
+
+  -- aesop
+
+  rfl
+
+
 theorem mul_comm (m n : MyNat) : mul m n = mul n m := by
-  sorry
+
+  induction' n with n ih
+  · rw [zero_mul]
+    rfl
+  rw [mul, ih, succ_mul]
+
+  -- search_proof
+
+  -- suggest_tactics
+
+  -- aesop
+
+
 end MyNat
