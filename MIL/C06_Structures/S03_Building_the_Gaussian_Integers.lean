@@ -180,7 +180,7 @@ end Int
 
 theorem sq_add_sq_eq_zero {α : Type*} [LinearOrderedRing α] (x y : α) :
     x ^ 2 + y ^ 2 = 0 ↔ x = 0 ∧ y = 0 := by
-  sorry
+  sorry -- NOTE: This theorem's ground truth proof uses another auxiliary theorem `aux` which is not present in this file.
 namespace GaussInt
 
 def norm (x : GaussInt) :=
@@ -188,13 +188,60 @@ def norm (x : GaussInt) :=
 
 @[simp]
 theorem norm_nonneg (x : GaussInt) : 0 ≤ norm x := by
-  sorry
+  -- search_proof
+  -- apply norm_nonneg
+
+  -- suggest_tactics
+  -- apply norm_nonneg
+
+  apply add_nonneg <;>
+  apply sq_nonneg
+
+  -- aesop
+
+
 theorem norm_eq_zero (x : GaussInt) : norm x = 0 ↔ x = 0 := by
-  sorry
+
+  rw [norm, sq_add_sq_eq_zero, GaussInt.ext_iff]
+
+  -- search_proof
+  -- simp_all only [zero_re, zero_im]
+
+  -- aesop
+
+  -- suggest_tactics
+  -- simp
+
+  rfl
+
 theorem norm_pos (x : GaussInt) : 0 < norm x ↔ x ≠ 0 := by
-  sorry
+
+  rw [lt_iff_le_and_ne, ne_comm, Ne, norm_eq_zero]
+
+  -- search_proof
+  -- simp_all only [norm_nonneg, true_and, ne_eq]
+
+  -- aesop
+
+  -- suggest_tactics
+  -- simp
+
+  simp [norm_nonneg]
+
 theorem norm_mul (x y : GaussInt) : norm (x * y) = norm x * norm y := by
-  sorry
+  -- search_proof
+  -- simp [norm]
+  -- ring
+
+  simp [norm]
+
+  -- suggest_tactics
+  -- ring
+
+  ring
+
+  -- aesop
+
 def conj (x : GaussInt) : GaussInt :=
   ⟨x.re, -x.im⟩
 
