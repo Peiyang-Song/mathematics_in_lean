@@ -56,8 +56,28 @@ example : 𝓝 (x₀, y₀) = 𝓝 x₀ ×ˢ 𝓝 y₀ :=
 
 example (f : ℕ → ℝ × ℝ) (x₀ y₀ : ℝ) :
     Tendsto f atTop (𝓝 (x₀, y₀)) ↔
-      Tendsto (Prod.fst ∘ f) atTop (𝓝 x₀) ∧ Tendsto (Prod.snd ∘ f) atTop (𝓝 y₀) :=
-  sorry
+      Tendsto (Prod.fst ∘ f) atTop (𝓝 x₀) ∧ Tendsto (Prod.snd ∘ f) atTop (𝓝 y₀) := by
+
+  rw [nhds_prod_eq]
+
+  -- search_proof
+  -- apply Iff.intro
+  -- · intro a
+  --   apply And.intro
+  --   · exact tendsto_fst.comp a
+  --   · rw [Function.comp]
+  --     rw [tendsto_prod_iff'] at a
+  --     simp_all only
+  -- · intro a
+  --   obtain ⟨left, right⟩ := a
+  --   exact left.prod_mk right
+
+  unfold Tendsto SProd.sprod Filter.instSProd Filter.prod
+  erw [le_inf_iff, ← map_le_iff_le_comap, map_map, ← map_le_iff_le_comap, map_map]
+
+  -- suggest_tactics
+
+  -- aesop
 
 example (x₀ : ℝ) : HasBasis (𝓝 x₀) (fun ε : ℝ ↦ 0 < ε) fun ε ↦ Ioo (x₀ - ε) (x₀ + ε) :=
   nhds_basis_Ioo_pos x₀
@@ -102,4 +122,3 @@ example (P Q R : ℕ → Prop) (hP : ∀ᶠ n in atTop, P n) (hQ : ∀ᶠ n in a
 example (u : ℕ → ℝ) (M : Set ℝ) (x : ℝ) (hux : Tendsto u atTop (𝓝 x))
     (huM : ∀ᶠ n in atTop, u n ∈ M) : x ∈ closure M :=
   sorry
-
