@@ -179,15 +179,37 @@ lemma inv_eq_of_mul [Group₃ G] {a b : G} (h : a * b = 1) : a⁻¹ = b :=
 
 @[to_additive (attr := simp)]
 lemma Group₃.mul_inv {G : Type} [Group₃ G] {a : G} : a * a⁻¹ = 1 := by
-  sorry
+  -- search_proof
+  -- symm
+  -- symm
+  -- rw [mul_inv]
+
+  rw [← inv_mul a⁻¹, inv_eq_of_mul (inv_mul a)]
+
+  -- suggest_tactics
+
+  -- aesop
 
 @[to_additive]
 lemma mul_left_cancel₃ {G : Type} [Group₃ G] {a b c : G} (h : a * b = a * c) : b = c := by
-  sorry
+
+  simpa [← mul_assoc₃] using congr_arg (a⁻¹ * ·) h
+
+  -- search_proof
+
+  -- suggest_tactics
+
+  -- aesop
 
 @[to_additive]
 lemma mul_right_cancel₃ {G : Type} [Group₃ G] {a b c : G} (h : b*a = c*a) : b = c := by
-  sorry
+  simpa [mul_assoc₃] using congr_arg (· * a⁻¹) h
+
+  -- search_proof
+
+  -- suggest_tactics
+
+  -- aesop
 
 class AddCommGroup₃ (G : Type) extends AddGroup₃ G, AddCommMonoid₃ G
 
