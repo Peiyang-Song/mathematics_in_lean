@@ -85,14 +85,64 @@ example {G : Type*} [Group G] (x : G) : x ∈ (⊥ : Subgroup G) ↔ x = 1 := Su
 def conjugate {G : Type*} [Group G] (x : G) (H : Subgroup G) : Subgroup G where
   carrier := {a : G | ∃ h, h ∈ H ∧ a = x * h * x⁻¹}
   one_mem' := by
+    -- search_proof
+    -- simp_all only [Set.mem_setOf_eq]
+    -- apply Exists.intro
+    -- · apply And.intro
+    --   · apply OneMemClass.one_mem
+    --   · simp_all only [mul_one, mul_inv_cancel]
+
+    -- aesop
+
+    -- suggest_tactics
+    -- exact ⟨1, by simp, by simp⟩
+
     dsimp
-    sorry
+    use 1
+    constructor
+    exact H.one_mem
+    group
   inv_mem' := by
+
     dsimp
-    sorry
+    rintro - ⟨h, h_in, rfl⟩
+    use h⁻¹, H.inv_mem h_in
+
+    -- search_proof
+    -- simp_all only [mul_inv_rev, inv_inv]
+    -- rw [mul_assoc]
+
+    -- suggest_tactics
+    -- simp [mul_assoc]
+
+    group
+
+    -- aesop
+
   mul_mem' := by
+    -- search_proof
+    -- intro a b a_1 a_2
+    -- simp_all only [Set.mem_setOf_eq]
+    -- obtain ⟨w, h⟩ := a_1
+    -- obtain ⟨w_1, h_1⟩ := a_2
+    -- obtain ⟨left, right⟩ := h
+    -- obtain ⟨left_1, right_1⟩ := h_1
+    -- subst right_1 right
+    -- simp_all only [conj_mul, mul_left_inj, mul_right_inj, exists_eq_right']
+    -- apply MulMemClass.mul_mem
+    -- · simp_all only
+    -- · simp_all only
+
+    -- aesop
+
     dsimp
-    sorry
+    rintro - - ⟨h, h_in, rfl⟩ ⟨k, k_in, rfl⟩
+    use h*k, H.mul_mem h_in k_in
+
+    -- suggest_tactics
+    -- simp
+
+    group
 
 example {G H : Type*} [Group G] [Group H] (G' : Subgroup G) (f : G →* H) : Subgroup H :=
   Subgroup.map f G'
@@ -117,10 +167,33 @@ variable {G H : Type*} [Group G] [Group H]
 open Subgroup
 
 example (φ : G →* H) (S T : Subgroup H) (hST : S ≤ T) : comap φ S ≤ comap φ T := by
-  sorry
+  -- search_proof
+  -- exact comap_mono hST
+
+  -- suggest_tactics
+  -- exact comap_mono hST
+
+  intro x hx
+
+  -- aesop
+
+  rw [mem_comap] at * -- Lean does not need this line
+  exact hST hx
 
 example (φ : G →* H) (S T : Subgroup G) (hST : S ≤ T) : map φ S ≤ map φ T := by
-  sorry
+  -- search_proof
+  -- exact map_mono hST
+
+  -- suggest_tactics
+  -- exact map_mono hST
+
+  intro x hx
+
+  -- aesop
+
+  rw [mem_map] at * -- Lean does not need this line
+  rcases hx with ⟨y, hy, rfl⟩
+  use y, hST hy
 
 variable {K : Type*} [Group K]
 
