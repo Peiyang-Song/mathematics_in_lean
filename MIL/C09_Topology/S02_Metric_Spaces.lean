@@ -83,8 +83,24 @@ example {s : Set X} : a ∈ closure s ↔ ∀ ε > 0, ∃ b ∈ s, a ∈ Metric.
   Metric.mem_closure_iff
 
 example {u : ℕ → X} (hu : Tendsto u atTop (𝓝 a)) {s : Set X} (hs : ∀ n, u n ∈ s) :
-    a ∈ closure s :=
-  sorry
+    a ∈ closure s := by
+  -- search_proof
+  -- refine mem_closure_of_tendsto hu ?_
+  -- simp_all only [eventually_atTop, ge_iff_le, implies_true, exists_const]
+
+  rw [Metric.tendsto_atTop] at hu
+  rw [Metric.mem_closure_iff]
+  intro ε ε_pos
+  rcases hu ε ε_pos with ⟨N, hN⟩
+  refine ⟨u N, hs _, ?_⟩
+  rw [dist_comm]
+
+  -- suggest_tactics
+  -- exact hN _ le_rfl
+
+  -- aesop
+
+  exact hN N le_rfl
 
 example {x : X} {s : Set X} : s ∈ 𝓝 x ↔ ∃ ε > 0, Metric.ball x ε ⊆ s :=
   Metric.nhds_basis_ball.mem_iff
@@ -124,8 +140,31 @@ example {X : Type*} [MetricSpace X] {Y : Type*} [MetricSpace Y] {f : X → Y} :
 
 example {X : Type*} [MetricSpace X] [CompactSpace X]
       {Y : Type*} [MetricSpace Y] {f : X → Y}
-    (hf : Continuous f) : UniformContinuous f :=
-  sorry
+    (hf : Continuous f) : UniformContinuous f := by
+  rw [Metric.uniformContinuous_iff]
+  intro ε ε_pos
+  let φ : X × X → ℝ := fun p ↦ dist (f p.1) (f p.2)
+  have φ_cont : Continuous φ := hf.fst'.dist hf.snd'
+  let K := { p : X × X | ε ≤ φ p }
+  have K_closed : IsClosed K := isClosed_le continuous_const φ_cont
+  have K_cpct : IsCompact K := K_closed.isCompact
+  rcases eq_empty_or_nonempty K with hK | hK
+  · use 1, by norm_num
+    intro x y _
+    have : (x, y) ∉ K := by simp [hK]
+    simpa [K] using this
+  · rcases K_cpct.exists_isMinOn hK continuous_dist.continuousOn with ⟨⟨x₀, x₁⟩, xx_in, H⟩
+    use dist x₀ x₁
+    constructor
+    · change _ < _
+      rw [dist_pos]
+      intro h
+      have : ε ≤ 0 := by simpa [K, φ, *] using xx_in
+      linarith
+    · intro x x'
+      contrapose!
+      intro (hxx' : (x, x') ∈ K)
+      exact H hxx'
 
 example (u : ℕ → X) :
     CauchySeq u ↔ ∀ ε > 0, ∃ N : ℕ, ∀ m ≥ N, ∀ n ≥ N, dist (u m) (u n) < ε :=
@@ -204,4 +243,3 @@ example [CompleteSpace X] (f : ℕ → Set X) (ho : ∀ n, IsOpen (f n)) (hd : �
   have I : ∀ n, ∀ m ≥ n, closedBall (c m) (r m) ⊆ closedBall (c n) (r n) := by sorry
   have yball : ∀ n, y ∈ closedBall (c n) (r n) := by sorry
   sorry
-
