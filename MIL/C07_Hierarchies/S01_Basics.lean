@@ -227,7 +227,25 @@ class Ring₃ (R : Type) extends AddGroup₃ R, Monoid₃ R, MulZeroClass R wher
 instance {R : Type} [Ring₃ R] : AddCommGroup₃ R :=
 { Ring₃.toAddGroup₃ with
   add_comm := by
-    sorry }
+
+    intro a b
+    have : a + (a + b + b) = a + (b + a + b) := calc
+      a + (a + b + b) = (a + a) + (b + b) := by simp [add_assoc₃, add_assoc₃]
+      _ = (1 * a + 1 * a) + (1 * b + 1 * b) := by simp
+      _ = (1 + 1) * a + (1 + 1) * b := by simp [Ring₃.right_distrib]
+      _ = (1 + 1) * (a + b) := by simp [Ring₃.left_distrib]
+      _ = 1 * (a + b) + 1 * (a + b) := by simp [Ring₃.right_distrib]
+      _ = (a + b) + (a + b) := by simp
+      _ = a + (b + a + b) := by simp [add_assoc₃]
+    exact add_right_cancel₃ (add_left_cancel₃ this)
+
+    -- search_proof
+
+    -- aesop
+
+    -- suggest_tactics
+
+}
 
 instance : Ring₃ ℤ where
   add := (· + ·)
