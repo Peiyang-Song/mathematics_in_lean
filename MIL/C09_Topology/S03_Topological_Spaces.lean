@@ -49,8 +49,29 @@ example {P : X → Prop} {x : X} (h : ∀ᶠ y in 𝓝 x, P y) : ∀ᶠ y in �
 
 example {α : Type*} (n : α → Filter α) (H₀ : ∀ a, pure a ≤ n a)
     (H : ∀ a : α, ∀ p : α → Prop, (∀ᶠ x in n a, p x) → ∀ᶠ y in n a, ∀ᶠ x in n y, p x) :
-    ∀ a, ∀ s ∈ n a, ∃ t ∈ n a, t ⊆ s ∧ ∀ a' ∈ t, s ∈ n a' :=
-  sorry
+    ∀ a, ∀ s ∈ n a, ∃ t ∈ n a, t ⊆ s ∧ ∀ a' ∈ t, s ∈ n a' := by
+  -- search_proof
+  -- intro a s a_1
+  -- apply Exists.intro
+  -- · apply And.intro
+  --   · exact H _ _ a_1
+  --   · apply And.intro
+  --     · tauto
+  --     · intro a' a_2
+  --       exact a_2
+
+
+  intro a s s_in
+  refine ⟨{ y | s ∈ n y }, H a (fun x ↦ x ∈ s) s_in, ?_, by tauto⟩
+
+  -- suggest_tactics
+  -- tauto
+
+  rintro y (hy : s ∈ n y)
+
+  -- aesop
+
+  exact H₀ y hy
 
 end
 
@@ -105,13 +126,51 @@ theorem aux {X Y A : Type*} [TopologicalSpace X] {c : A → X}
       {f : A → Y} {x : X} {F : Filter Y}
       (h : Tendsto f (comap c (𝓝 x)) F) {V' : Set Y} (V'_in : V' ∈ F) :
     ∃ V ∈ 𝓝 x, IsOpen V ∧ c ⁻¹' V ⊆ f ⁻¹' V' := by
-  sorry
+  simpa [and_assoc] using ((nhds_basis_opens' x).comap c).tendsto_left_iff.mp h V' V'_in
+
+  -- search_proof
+
+  -- suggest_tactics
+
+  -- aesop
 
 example [TopologicalSpace X] [TopologicalSpace Y] [T3Space Y] {A : Set X}
     (hA : ∀ x, x ∈ closure A) {f : A → Y} (f_cont : Continuous f)
     (hf : ∀ x : X, ∃ c : Y, Tendsto f (comap (↑) (𝓝 x)) (𝓝 c)) :
     ∃ φ : X → Y, Continuous φ ∧ ∀ a : A, φ a = f a := by
-  sorry
+
+  choose φ hφ using hf
+  use φ
+  constructor
+  · rw [continuous_iff_continuousAt]
+    intro x
+    suffices ∀ V' ∈ 𝓝 (φ x), IsClosed V' → φ ⁻¹' V' ∈ 𝓝 x by
+      simpa [ContinuousAt, (closed_nhds_basis (φ x)).tendsto_right_iff]
+    intro V' V'_in V'_closed
+    obtain ⟨V, V_in, V_op, hV⟩ : ∃ V ∈ 𝓝 x, IsOpen V ∧ (↑) ⁻¹' V ⊆ f ⁻¹' V' := aux (hφ x) V'_in
+    suffices : ∀ y ∈ V, φ y ∈ V'
+    exact mem_of_superset V_in this
+    intro y y_in
+    have hVx : V ∈ 𝓝 y := V_op.mem_nhds y_in
+    haveI : (comap ((↑) : A → X) (𝓝 y)).NeBot := by simpa [mem_closure_iff_comap_neBot] using hA y
+    apply V'_closed.mem_of_tendsto (hφ y)
+
+    -- search_proof
+    -- simp_all only [eventually_comap, Subtype.forall]
+    -- filter_upwards [hVx]
+    -- intro a a_1 a_2 b a_3
+    -- subst a_3
+    -- apply hV
+    -- simp_all only [mem_preimage]
+
+    exact mem_of_superset (preimage_mem_comap hVx) hV
+  · intro a
+    have lim : Tendsto f (𝓝 a) (𝓝 (φ a)) := by simpa [nhds_induced] using hφ a
+    exact tendsto_nhds_unique lim f_cont.continuousAt
+
+  -- aesop
+
+  -- suggest_tactics
 
 #check HasBasis.tendsto_right_iff
 
